@@ -44,4 +44,4 @@ WITH deduplicate AS (
     ((raw__weatherapp.data)::json -> 'gust_kph'::text) AS gust_kph,
     ((raw__weatherapp.data)::json -> 'uv'::text) AS uv
    FROM (raw__weatherapp
-     RIGHT JOIN deduplicate deduplicate ON (((raw__weatherapp.id = deduplicate.id) AND (raw__weatherapp.modified_timestamp = deduplicate.modified_timestamp))));d
+     RIGHT JOIN deduplicate deduplicate ON (((raw__weatherapp.id = deduplicate.id) AND (raw__weatherapp.modified_timestamp = deduplicate.modified_timestamp))));
