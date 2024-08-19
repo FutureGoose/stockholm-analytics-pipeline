@@ -60,6 +60,7 @@ def fetch_weather_data(api_url, api_key, location, date):
 def json_to_bigquery(json_data):
     client = bigquery.Client()
     table_id = "team-god.weather_data.raw_weatherapp"
+    table = client.get_table(table_id)
 
     rows_to_insert = [
         {
@@ -71,7 +72,8 @@ def json_to_bigquery(json_data):
         for hour in json_data['hour']
     ]
 
-    errors = client.insert_rows_json(table_id, rows_to_insert)
+    # errors = client.insert_rows_json(table_id, rows_to_insert)
+    errors = client.insert_rows(table, rows_to_insert)
     if errors:
         raise Exception(f"Failed to insert rows: {errors}")
     print(f'Inserted {len(rows_to_insert)} rows')
