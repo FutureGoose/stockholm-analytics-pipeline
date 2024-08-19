@@ -1,5 +1,5 @@
 from airflow import DAG
-from airflow.providers.google.cloud.operators.cloud_run import CloudRunJobStartOperator
+from airflow.providers.google.cloud.operators.cloud_run import CloudRunJobOperator
 from airflow.utils.dates import days_ago
 from airflow.operators.dummy import DummyOperator
 from datetime import datetime, timedelta
@@ -26,7 +26,7 @@ with DAG(
         task_id='start',
     )
 
-    run_ingestion = CloudRunJobStartOperator(
+    run_ingestion = CloudRunJobOperator(
         task_id='run_ingestion',
         location='europe-north1',
         project_id='team-god',
