@@ -3,3 +3,4 @@ weather_ml.ipynb
 *.csv
 *.pkl
 *.ipynb_checkpoints
+secrets/
