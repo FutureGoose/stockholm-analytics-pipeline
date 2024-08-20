@@ -1,23 +1,11 @@
 FROM python:3.9-slim
 
-# set working directory
 WORKDIR /app
 
-# copy only the requirements file first to leverage Docker cache
-COPY requirements.txt .
+COPY . /app/
 
-# install the dependencies
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install -r requirements.txt
 
-# copy the rest of the application code
-COPY . .
-
-# set environment variables
 ENV PORT 8080
-ENV GOOGLE_APPLICATION_CREDENTIALS=/app/team-god-aee8ad0c0106.json
 
-# expose the port
-EXPOSE 8080
-
-# command to run the application
-CMD ["uvicorn", "ingestion:app", "--host", "0.0.0.0", "--port", "8080"]
+CMD ["uvicorn", "ingestion:app", "--host", "0.0.0.0", "--port", "$PORT"]
