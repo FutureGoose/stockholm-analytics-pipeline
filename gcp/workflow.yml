@@ -1,39 +1,40 @@
 main:
   params: []
   steps:
-    - getYesterdayDate:
-        call: http.get
-        args:
-          url: https://europe-north1-team-god.cloudfunctions.net/yesterday_date  # URL of your Cloud Function
-        result: yesterdayDate
     - callWeatherAPI:
         call: http.get
         args:
           url: https://ingestion-service-5d5xhd46ea-lz.a.run.app/ingestion
           query:
             location: "Stockholm"
-            date: ${yesterdayDate.body}
+            date: "2024-08-10"  # hardcoded date
         result: weatherResponse
+    - logWeatherResponse:
+        call: sys.log
+        args:
+         text: ${json.encode_to_string(weatherResponse.body)}
+         severity: "INFO"  # optional: Set the severity level
     - checkWeatherAPIResponse:
         switch:
-          - condition: ${weatherResponse.status == 200}
-            next: callBigQueryService
-          - condition: ${weatherResponse.status != 200}
-            next: handleError
-    - callBigQueryService:
+        #   - condition: ${weatherResponse.body == ""}
+        #     next: handleError
+          - condition: true  # default condition for successful response
+            next: processWeatherData
+    - processWeatherData:
         call: http.post
         args:
           url: https://ingestion-service-5d5xhd46ea-lz.a.run.app/bigquery
-          body:
-            data: ${weatherResponse.body}
+          body: ${weatherResponse.body}
         result: bigQueryResponse
     - checkBigQueryResponse:
         switch:
-          - condition: ${bigQueryResponse.status == 200}
-            next: workflow_end
-          - condition: ${bigQueryResponse.status != 200}
-            next: handleError
+        #   - condition: ${bigQueryResponse.status == 200}
+        #     next: workflow_end
+        #   - condition: true  # default condition for error handling
+        #     next: handleError
+            - condition: true
+              next: workflow_end
     - handleError:
-        raise: '${"Error in workflow execution: " + weatherResponse.status + " or " + bigQueryResponse.status}'
+        raise: '${"Error in workflow execution: " + weatherResponse.body}'
     - workflow_end:
         return: 'Workflow executed successfully'
