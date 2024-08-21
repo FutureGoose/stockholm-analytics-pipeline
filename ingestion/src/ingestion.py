@@ -89,6 +89,9 @@ def ingestion(location: str, date: str):
     API_URL = os.getenv('API_URL')
     API_KEY = os.getenv('API_KEY')
 
+    if not API_URL or not API_KEY:
+        raise HTTPException(status_code=500, detail="API_URL or API_KEY not set")
+
     formatted_data = json
     try:
         weather_data = fetch_weather_data(
