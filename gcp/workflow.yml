@@ -1,13 +1,21 @@
 main:
   params: []
   steps:
+    - getYesterdayDate:
+        call: http.get
+        args:
+          url: https://yesterday-date-5d5xhd46ea-lz.a.run.app
+        result: yesterdayDate
+    - extractDate:
+        assign:
+          - yesterdayDateString: ${yesterdayDate.body.date}
     - callWeatherAPI:
         call: http.get
         args:
           url: https://ingestion-service-5d5xhd46ea-lz.a.run.app/ingestion
           query:
             location: "Stockholm"
-            date: "2024-08-10"  # hardcoded date
+            date: ${yesterdayDateString}
         result: weatherResponse
     - logWeatherResponse:
         call: sys.log
