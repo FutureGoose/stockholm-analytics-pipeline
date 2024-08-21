@@ -28,35 +28,7 @@ def fetch_weather_data(api_url, api_key, location, date):
         response.raise_for_status()
 
 
-#This function unpacks the json and sends the data to postgres
-# def json_to_psql(json_data):
-    
-#     conn = psycopg2.connect(
-#         user=os.getenv('POSTGRES_USER'),
-#         password=os.getenv('POSTGRES_PASSWORD'),
-#         host='db',
-#         port='5432',
-#         database=os.getenv('POSTGRES_DB')
-#     )
-#     cur = conn.cursor()
-    
-#     for hour in json_data['hour']:
-#         ingestion_timestamp = pendulum.now().format('YYYY-MM-DD:HH:mm:ss')
-#         modified_timestamp = pendulum.from_format(json_data['location']['localtime'], 'YYYY-MM-DD HH:mm').format('YYYY-MM-DD:HH:mm:ss')
-#         id_time_epoch = hour['time_epoch']
-#         data = json.dumps(hour, indent=4)
-#         cur.execute(
-#             """
-#             INSERT INTO RAW__WEATHERAPP (ingestion_timestamp, modified_timestamp, id, data)
-#             VALUES (%s, %s, %s, %s)
-#             """, (ingestion_timestamp, modified_timestamp, id_time_epoch, data)
-#             )
-#     conn.commit()
-#     cur.close()
-#     conn.close()
-#     print(f'Inserted {len(json_data["hour"])} rows')
-
-# This function unpacks the json and sends the data to BigQuery
+# unpacks json and sends the data to BigQuery table
 def json_to_bigquery(json_data):
     client = bigquery.Client()
     table_id = "team-god.weather_data.raw_weatherapp"
@@ -89,6 +61,9 @@ def ingestion(location: str, date: str):
     API_URL = os.getenv('API_URL')
     API_KEY = os.getenv('API_KEY')
 
+    if not API_URL or not API_KEY:
+        raise HTTPException(status_code=500, detail="API_URL or API_KEY not set")
+
     formatted_data = json
     try:
         weather_data = fetch_weather_data(
@@ -101,17 +76,28 @@ def ingestion(location: str, date: str):
             'location': weather_data['location'],
             'hour': weather_data['forecast']['forecastday'][0]['hour']
         }
+        
     except requests.exceptions.RequestException as e:
         print(f'Error fetching data from API: {e}')
         raise HTTPException(status_code=500, detail="Error fetching data from API")
 
-    # try:
-    #     json_to_psql(formatted_data)
-    # except Exception:
-    #     print('Insert to Data Warehouse failed')
+    return formatted_data
 
+    # try:
+    #     json_to_bigquery(formatted_data)
+    # except Exception as e:
+    #     print(f'Insert to BigQuery failed: {e}')
+    #     raise HTTPException(status_code=500, detail="Insert to BigQuery failed")
+
+@app.post("/bigquery")
+def bigquery_endpoint(json_data: dict):
     try:
-        json_to_bigquery(formatted_data)
+        json_to_bigquery(json_data)
     except Exception as e:
-        print(f'Insert to BigQuery failed: {e}')
-        raise HTTPException(status_code=500, detail="Insert to BigQuery failed")
+        raise HTTPException(status_code=500, detail=f"Insert to BigQuery failed: {e}")
+    
+
+# docker build -t gcr.io/team-god/ingestion .
+# docker push gcr.io/team-god/ingestion
+# gcloud auth configure-docker
+# gcloud run deploy ingestion-service --image gcr.io/team-god/ingestion --platform managed --region europe-north1

@@ -1,0 +1,48 @@
+main:
+  params: []
+  steps:
+    - getYesterdayDate:
+        call: http.get
+        args:
+          url: https://yesterday-date-5d5xhd46ea-lz.a.run.app
+        result: yesterdayDate
+    - extractDate:
+        assign:
+          - yesterdayDateString: ${yesterdayDate.body.date}
+    - callWeatherAPI:
+        call: http.get
+        args:
+          url: https://ingestion-service-5d5xhd46ea-lz.a.run.app/ingestion
+          query:
+            location: "Stockholm"
+            date: ${yesterdayDateString}
+        result: weatherResponse
+    - logWeatherResponse:
+        call: sys.log
+        args:
+         text: ${json.encode_to_string(weatherResponse.body)}
+         severity: "INFO"  # optional: Set the severity level
+    - checkWeatherAPIResponse:
+        switch:
+        #   - condition: ${weatherResponse.body == ""}
+        #     next: handleError
+          - condition: true  # default condition for successful response
+            next: processWeatherData
+    - processWeatherData:
+        call: http.post
+        args:
+          url: https://ingestion-service-5d5xhd46ea-lz.a.run.app/bigquery
+          body: ${weatherResponse.body}
+        result: bigQueryResponse
+    - checkBigQueryResponse:
+        switch:
+        #   - condition: ${bigQueryResponse.status == 200}
+        #     next: workflow_end
+        #   - condition: true  # default condition for error handling
+        #     next: handleError
+            - condition: true
+              next: workflow_end
+    - handleError:
+        raise: '${"Error in workflow execution: " + weatherResponse.body}'
+    - workflow_end:
+        return: 'Workflow executed successfully'
