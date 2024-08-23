@@ -80,8 +80,7 @@ def read(location: str, date: str) -> dict:
         }
         
     except requests.exceptions.RequestException as e:
-        print(f'Error fetching data from API: {e}')
-        raise HTTPException(status_code=500, detail="Error fetching data from API")
+        raise HTTPException(status_code=500, detail=f"Error fetching data from API: {e}")
 
     return formatted_data
   
@@ -98,7 +97,7 @@ def main(location: str, date: str):
         raise HTTPException(status_code=500, detail=f"Insert to BigQuery failed: {e}")
     
     response = {"message": "Workflow executed successfully", "status_code": 200}
-    print(response)
+
     return response
 
 
