@@ -8,7 +8,7 @@ main:
         result: yesterdayDate
     - extractDate:
         assign:
-          - yesterdayDateString: ${yesterdayDate.body}
+          - yesterdayDateString: ${yesterdayDate.body.date}
     - retrieveAndStoreWeatherData:
         call: http.get
         args:
