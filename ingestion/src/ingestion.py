@@ -101,4 +101,4 @@ def main(location: str, date: str):
 # docker build -t gcr.io/team-god/ingestion .
 # docker push gcr.io/team-god/ingestion
 # gcloud auth configure-docker
-# gcloud run deploy ingestion-service --image gcr.io/team-god/ingestion --platform managed --region europe-north1
+# gcloud run deploy ingestion-service --image gcr.io/team-god/ingestion --platform managed --region europe-north1 --concurrency 2 --max-instances 2
