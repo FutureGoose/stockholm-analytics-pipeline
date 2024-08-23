@@ -6,7 +6,9 @@ from fastapi import FastAPI, HTTPException
 from google.cloud import bigquery
 import pendulum
 
+# initialize FastAPI
 app = FastAPI()
+# load environment variables
 load_dotenv()
 
 
@@ -29,7 +31,7 @@ def fetch_weather_data(api_url: str, api_key: str, location: str, date: str) -> 
         response.raise_for_status()
 
 
-def json_to_bigquery(json_data: dict) -> None:
+def write(json_data: dict) -> None:
     """
     Unpacks json and sends the data to BigQuery table.
     """
@@ -53,13 +55,7 @@ def json_to_bigquery(json_data: dict) -> None:
     print(f'Inserted {len(rows_to_insert)} rows')
 
 
-@app.get("/")
-def read_root():
-    return "Welcome to our ingestion API"
-
-
-@app.get("/ingestion")
-def ingestion(location: str, date: str) -> dict:
+def read(location: str, date: str) -> dict:
     """
     Calls the API and formats the data for BigQuery.
     """
@@ -87,14 +83,23 @@ def ingestion(location: str, date: str) -> dict:
         raise HTTPException(status_code=500, detail="Error fetching data from API")
 
     return formatted_data
+  
 
+@app.get("/")
+def main(location: str, date: str):
+    # call read function to fetch data
+    data = read(location, date)
 
-@app.post("/bigquery")
-def bigquery_endpoint(json_data: dict) -> None:
+    # call write function, send data to BigQuery
     try:
-        json_to_bigquery(json_data)
+        data=write(data)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Insert to BigQuery failed: {e}")
+    
+    return "Workflow executed successfully"
+
+if __name__ == "__main__":
+    main()
 
 
 # docker build -t gcr.io/team-god/ingestion .
