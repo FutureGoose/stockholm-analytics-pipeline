@@ -66,7 +66,6 @@ def read(location: str, date: str) -> dict:
     if not API_URL or not API_KEY:
         raise HTTPException(status_code=500, detail="API_URL or API_KEY not set")
 
-    formatted_data = json
     try:
         weather_data = fetch_weather_data(
             api_url=API_URL,
@@ -96,9 +95,7 @@ def main(location: str, date: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Insert to BigQuery failed: {e}")
     
-    response = {"message": "Workflow executed successfully", "status_code": 200}
-
-    return response
+    return {"status_code": 200}
 
 
 # docker build -t gcr.io/team-god/ingestion .
