@@ -3,7 +3,6 @@ import requests
 import json
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
-# import psycopg2
 from google.cloud import bigquery
 import pendulum
 
@@ -11,8 +10,10 @@ app = FastAPI()
 load_dotenv()
 
 
-#This function fetches the weather data
-def fetch_weather_data(api_url, api_key, location, date):
+def fetch_weather_data(api_url: str, api_key: str, location: str, date: str) -> dict:
+    """
+    Fetches weather data from API.
+    """
     params = {
         'key': api_key,
         'q': location,
@@ -28,8 +29,10 @@ def fetch_weather_data(api_url, api_key, location, date):
         response.raise_for_status()
 
 
-# unpacks json and sends the data to BigQuery table
-def json_to_bigquery(json_data):
+def json_to_bigquery(json_data: dict) -> None:
+    """
+    Unpacks json and sends the data to BigQuery table.
+    """
     client = bigquery.Client()
     table_id = "team-god.weather_data.raw_weatherapp"
     table = client.get_table(table_id)
@@ -44,7 +47,6 @@ def json_to_bigquery(json_data):
         for hour in json_data['hour']
     ]
 
-    # errors = client.insert_rows_json(table_id, rows_to_insert)
     errors = client.insert_rows(table, rows_to_insert)
     if errors:
         raise Exception(f"Failed to insert rows: {errors}")
@@ -57,7 +59,10 @@ def read_root():
 
 
 @app.get("/ingestion")
-def ingestion(location: str, date: str):
+def ingestion(location: str, date: str) -> dict:
+    """
+    Calls the API and formats the data for BigQuery.
+    """
     API_URL = os.getenv('API_URL')
     API_KEY = os.getenv('API_KEY')
 
@@ -83,19 +88,14 @@ def ingestion(location: str, date: str):
 
     return formatted_data
 
-    # try:
-    #     json_to_bigquery(formatted_data)
-    # except Exception as e:
-    #     print(f'Insert to BigQuery failed: {e}')
-    #     raise HTTPException(status_code=500, detail="Insert to BigQuery failed")
 
 @app.post("/bigquery")
-def bigquery_endpoint(json_data: dict):
+def bigquery_endpoint(json_data: dict) -> None:
     try:
         json_to_bigquery(json_data)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Insert to BigQuery failed: {e}")
-    
+
 
 # docker build -t gcr.io/team-god/ingestion .
 # docker push gcr.io/team-god/ingestion
