@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
 from google.cloud import bigquery
 import pendulum
+from fastapi.responses import JSONResponse
 
 # initialize FastAPI
 app = FastAPI()
@@ -96,7 +97,7 @@ def main(location: str, date: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Insert to BigQuery failed: {e}")
     
-    return "Workflow executed successfully"
+    return JSONResponse(content={"message": "Workflow executed successfully"})
 
 
 # docker build -t gcr.io/team-god/ingestion .
