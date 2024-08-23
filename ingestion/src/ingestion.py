@@ -98,9 +98,6 @@ def main(location: str, date: str):
     
     return "Workflow executed successfully"
 
-if __name__ == "__main__":
-    main()
-
 
 # docker build -t gcr.io/team-god/ingestion .
 # docker push gcr.io/team-god/ingestion
