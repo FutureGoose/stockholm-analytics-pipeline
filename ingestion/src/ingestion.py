@@ -97,7 +97,9 @@ def main(location: str, date: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Insert to BigQuery failed: {e}")
     
-    return JSONResponse(content={"message": "Workflow executed successfully"})
+    response = {"message": "Workflow executed successfully", "status_code": 200}
+    print(response)
+    return response
 
 
 # docker build -t gcr.io/team-god/ingestion .
