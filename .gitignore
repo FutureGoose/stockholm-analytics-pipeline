@@ -1,3 +1,6 @@
-**/Zone.Identifier
-**.csv
-**.pkl
+Zone.Identifier
+secrets/
+venv
+*.csv
+*.pkl
+*.ipynb_checkpoints
