@@ -9,7 +9,7 @@ WITH weather_data AS
    FROM `team-god.weather_data.raw_weatherapp`
   WHERE 1=1
 QUALIFY ROW_NUMBER() OVER (PARTITION BY temp_time ORDER BY modified_timestamp DESC) = 1 -- Gives only the most recent row for each unique temp_time
-ORDER BY temp_time ASC)
+  ORDER BY temp_time ASC)
 
 SELECT temp_time,
        hour,
@@ -28,7 +28,7 @@ SELECT temp_time,
        ORDER BY temp_time
        ) AS temp_lag_3 -- Returns temperature 3 hours ago
   FROM weather_data
-ORDER BY temp_time DESC
-LIMIT 24;
+ ORDER BY temp_time DESC
+ LIMIT 24;
 
 
