@@ -8,7 +8,7 @@ WITH weather_data AS
         CAST(JSON_EXTRACT_SCALAR(data, '$.pressure_mb') AS FLOAT64) AS pressure,
    FROM `team-god.weather_data.raw_weatherapp`
   WHERE 1=1 -- Needed for qualify
-QUALIFY ROW_NUMBER() OVER (PARTITION BY temp_time ORDER BY modified_timestamp DESC) = 1
+QUALIFY ROW_NUMBER() OVER (PARTITION BY temp_time ORDER BY modified_timestamp DESC) = 1 -- Gives only the most recent row for each unique temp_time
 ORDER BY temp_time ASC)
 
 SELECT temp_time,
@@ -20,13 +20,13 @@ SELECT temp_time,
        MAX(temp) OVER (
        ORDER BY temp_time
        ROWS BETWEEN 1 FOLLOWING AND 23 FOLLOWING
-       ) AS temp_target,
+       ) AS temp_target, -- Returns max temp next 24 hours
        LAG(temp, 1) OVER (
        ORDER BY temp_time
-       ) AS temp_lag_1,
+       ) AS temp_lag_1, -- Returns temperature 1 hour ago 
        LAG(temp, 3) OVER (
        ORDER BY temp_time
-       ) AS temp_lag_3
+       ) AS temp_lag_3 -- Returns temperature 3 hours ago
   FROM weather_data
 ORDER BY temp_time DESC
 LIMIT 24;
