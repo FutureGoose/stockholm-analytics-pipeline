@@ -7,7 +7,7 @@ WITH weather_data AS
         CAST(JSON_EXTRACT_SCALAR(data, '$.temp_c') AS FLOAT64) AS temp,
         CAST(JSON_EXTRACT_SCALAR(data, '$.pressure_mb') AS FLOAT64) AS pressure,
    FROM `team-god.weather_data.raw_weatherapp`
-  WHERE 1=1 -- Needed for qualify
+  WHERE 1=1
 QUALIFY ROW_NUMBER() OVER (PARTITION BY temp_time ORDER BY modified_timestamp DESC) = 1 -- Gives only the most recent row for each unique temp_time
 ORDER BY temp_time ASC)
 
