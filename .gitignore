@@ -1,6 +1,7 @@
 Zone.Identifier
 secrets/
 venv
+data/
 *.csv
 *.pkl
 *.ipynb_checkpoints
