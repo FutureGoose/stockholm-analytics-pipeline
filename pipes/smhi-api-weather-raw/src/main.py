@@ -44,7 +44,7 @@ def write_to_bigquery(json_data: dict, parameter: int) -> None:
             "parameter": parameter,
             "data": json.dumps(record)
         }
-        for record in json_data['value']
+        for record in json_data
     ]
 
     errors = client.insert_rows(table, rows_to_insert)
