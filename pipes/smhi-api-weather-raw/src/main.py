@@ -9,9 +9,9 @@ import pendulum
 app = FastAPI()
 load_dotenv()
 
-def fetch_weather_data(api_url: str, longitude: str, latitude: str, parameter: str, from_date: str, to_date: str) -> dict:
+def fetch_radiation_data(api_url: str, longitude: str, latitude: str, parameter: str, from_date: str, to_date: str) -> dict:
     """
-    Fetches weather data from API.
+    Fetches radiation data from API.
     """
     params = {
         "from": from_date,
