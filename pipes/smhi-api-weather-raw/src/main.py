@@ -35,7 +35,7 @@ def write_to_bigquery(json_data: dict, parameter: int) -> None:
     Sends fetched data to BigQuery table.
     """
     client = bigquery.Client()
-    table_id = "team-god.radiation_data.raw_radiation_app"
+    table_id = "team-god.radiation_data.raw_radiationapp"
     table = client.get_table(table_id)
 
     rows_to_insert = [
