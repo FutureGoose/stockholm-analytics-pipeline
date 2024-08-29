@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'pipes/weatherapi-api-weather-raw/**'
 
 jobs:
   build-and-deploy:
