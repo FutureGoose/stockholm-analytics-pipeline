@@ -34,6 +34,5 @@ jobs:
           --memory 128MB \
           --concurrency 2 \
           --max-instances 2 \
-          --no-gen2 \
           --source ./pipes/python-yesterday-http/src \
           --service-account 76117246159-compute@developer.gserviceaccount.com
