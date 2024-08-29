@@ -35,4 +35,4 @@ jobs:
           --concurrency 2 \
           --max-instances 2 \
           --no-gen2 \
-          --source=pipes/python-yesterday
+          --source ./pipes/python-yesterday-http/src
