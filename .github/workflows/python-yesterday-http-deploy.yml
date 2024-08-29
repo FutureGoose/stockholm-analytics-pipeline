@@ -34,4 +34,5 @@ jobs:
           --memory 128MB \
           --concurrency 2 \
           --max-instances 2 \
-          --source ./pipes/python-yesterday-http.py
+          --no-gen2 \
+          --source ./pipes/python-yesterday
