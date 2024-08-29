@@ -24,15 +24,15 @@ jobs:
       run: gcloud auth configure-docker
 
     - name: Build Docker image
-      run: docker build -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/api-weather-raw ./pipes/api-weather-raw
+      run: docker build -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/api-weather-raw ./pipes/weatherapi-api-weather-raw
 
     - name: Push Docker image
-      run: docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/api-weather-raw
+      run: docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/weatherapi-api-weather-raw
 
     - name: Deploy to Cloud Run
       run: |
-        gcloud run deploy api-weather-raw-service \
-          --image gcr.io/${{ secrets.GCP_PROJECT_ID }}/api-weather-raw \
+        gcloud run deploy weatherapi-api-weather-raw-service \
+          --image gcr.io/${{ secrets.GCP_PROJECT_ID }}/weatherapi-api-weather-raw \
           --platform managed \
           --region europe-north1 \
           --concurrency 2 \
