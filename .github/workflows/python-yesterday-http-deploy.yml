@@ -25,7 +25,7 @@ jobs:
 
     - name: Deploy to Cloud Functions
       run: |
-        gcloud functions deploy get_yesterday_date \
+        gcloud functions deploy python-yesterday-http \
           --runtime python39 \
           --trigger-http \
           --allow-unauthenticated \
