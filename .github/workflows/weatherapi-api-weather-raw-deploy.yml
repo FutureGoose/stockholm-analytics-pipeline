@@ -4,8 +4,8 @@ on:
   push:
     branches:
       - main
-    # paths:
-    #   - 'pipes/weatherapi-api-weather-raw/**'
+    paths:
+      - 'pipes/weatherapi-api-weather-raw/**'
 
 jobs:
   build-and-deploy:
@@ -28,7 +28,6 @@ jobs:
 
     - name: Configure Docker
       run: gcloud auth configure-docker
-
 
     - name: Build Docker image
       run: docker build -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/weatherapi-api-weather-raw ./pipes/weatherapi-api-weather-raw
