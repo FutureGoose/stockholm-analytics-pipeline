@@ -4,8 +4,8 @@ on:
   push:
     branches:
       - main
-    paths:
-      - 'pipes/python-yesterday-http/**'
+    # paths:
+    #   - 'pipes/python-yesterday-http/**'
 
 jobs:
   deploy:
