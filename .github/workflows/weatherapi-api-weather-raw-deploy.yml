@@ -29,8 +29,19 @@ jobs:
     - name: Configure Docker
       run: gcloud auth configure-docker
 
+    - name: Cache Docker layers
+      uses: actions/cache@v3
+      with:
+        path: /tmp/.buildx-cache
+        key: ${{ runner.os }}-buildx-${{ github.sha }}
+        restore-keys: |
+          ${{ runner.os }}-buildx-
+
     - name: Build Docker image
-      run: docker build -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/weatherapi-api-weather-raw ./pipes/weatherapi-api-weather-raw
+      run: |
+        docker build --cache-from=type=local,src=/tmp/.buildx-cache \
+                     --cache-to=type=local,dest=/tmp/.buildx-cache-new \
+                     -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/weatherapi-api-weather-raw ./pipes/weatherapi-api-weather-raw
 
     - name: Push Docker image
       run: docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/weatherapi-api-weather-raw
@@ -44,3 +55,10 @@ jobs:
           --concurrency 2 \
           --max-instances 2 \
           --allow-unauthenticated
+
+    - name: Save Docker cache
+      if: always()
+      uses: actions/cache@v3
+      with:
+        path: /tmp/.buildx-cache-new
+        key: ${{ runner.os }}-buildx-${{ github.sha }}
