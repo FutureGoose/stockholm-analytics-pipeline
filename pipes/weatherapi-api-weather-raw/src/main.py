@@ -98,8 +98,8 @@ def main(location: str, date: str):
     return {"status_code": 200}
 
 
-# docker build -t gcr.io/team-god/api-weather-raw .
-# docker push gcr.io/team-god/api-weather-raw
+# docker build -t gcr.io/team-god/weatherapi-api-weather-raw .
+# docker push gcr.io/team-god/weatherapi-api-weather-raw
 # gcloud auth configure-docker
-# gcloud run deploy api-weather-raw-service --image gcr.io/team-god/api-weather-raw --platform managed --region europe-north1 --concurrency 2 --max-instances 2
+# gcloud run deploy weatherapi-api-weather-raw-service --image gcr.io/team-god/weatherapi-api-weather-raw --platform managed --region europe-north1 --concurrency 2 --max-instances 2
 # gcloud run services delete SERVICE_NAME --region europe-north1
