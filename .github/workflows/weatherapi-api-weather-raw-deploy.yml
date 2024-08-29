@@ -44,6 +44,7 @@ jobs:
           --image gcr.io/${{ secrets.GCP_PROJECT_ID }}/weatherapi-api-weather-raw \
           --platform managed \
           --region europe-north1 \
+          --memory 256MB \
           --concurrency 2 \
           --max-instances 2 \
           --allow-unauthenticated
