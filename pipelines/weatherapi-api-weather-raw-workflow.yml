@@ -4,7 +4,7 @@ main:
     - getYesterdayDate:
         call: http.get
         args:
-          url: https://yesterday-date-5d5xhd46ea-lz.a.run.app
+          url: https://europe-west1-team-god.cloudfunctions.net/python-yesterday-http
         result: yesterdayDate
     - extractDate:
         assign:
@@ -12,18 +12,18 @@ main:
     - retrieveAndStoreWeatherData:
         call: http.get
         args:
-          url: https://ingestion-service-5d5xhd46ea-lz.a.run.app/
+          url: https://weatherapi-api-weather-raw-service-5d5xhd46ea-lz.a.run.app
           query:
             location: "Stockholm"
             date: ${yesterdayDateString}
         result: PipelineResponse
     - validatePipelineResponse:
         switch:
-          - condition: ${PipelineResponse.status_code == 200}
+          - condition: ${PipelineResponse.body.status_code == 200}
             steps:
               - workflow_end:
                   return: 'Workflow executed successfully'
-          - condition: ${PipelineResponse.status_code != 200}
+          - condition: ${PipelineResponse.body.status_code != 200}
             steps:
               - handleError:
-                  raise: '${"Error in workflow execution: " + PipelineResponse.body}'
+                  raise: '${"Error in workflow execution: " + PipelineResponse.content.message}'
