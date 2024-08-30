@@ -26,6 +26,6 @@ jobs:
         project_id: ${{ secrets.GCP_PROJECT_ID }}
         install_components: 'bq'
 
-    - name: Update BigQuery Query
+    - name: Execute BigQuery SQL Query
       run: |
-        bq query --use_legacy_sql=false --replace --destination_table=team-god.weather_data.clean_weatherapp < pipes/raw-weather-clean/clean_weatherapp.sql
+        bq query --use_legacy_sql=false < pipes/raw-weather-clean/clean_weatherapp.sql
