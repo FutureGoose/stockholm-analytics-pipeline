@@ -23,6 +23,3 @@ class TestReadFunction(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-
-
-# python pipes/weatherapi-api-weather-raw/tests/test_read.py
