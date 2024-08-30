@@ -1,4 +1,4 @@
-name: Deploy Weather Ingestion Workflow
+name: Deploy weatherapi-api-weather-raw-workflow.yml
 
 on:
   push:

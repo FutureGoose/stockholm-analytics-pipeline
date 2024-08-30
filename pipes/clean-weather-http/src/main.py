@@ -1,6 +1,5 @@
-from fastapi import FastAPI, Query
+from fastapi import FastAPI
 from google.cloud import bigquery
-from pydantic import BaseModel
 import joblib
 
 app = FastAPI()
@@ -20,7 +19,7 @@ async def predict(
 
     # Fetch data from BigQuery
     client = bigquery.Client()
-    query = f"""
+    query = """
     SELECT * FROM `team-god.weather_data.clean_weatherapp`
     """
     df = client.query(query).to_dataframe()
