@@ -2,8 +2,10 @@ name: Deploy Clean Weatherapp SQL
 
 on:
   push:
-    paths:
-      - 'clean_weatherapp.sql'
+    branches:
+        - main
+    # paths:
+    #   - 'pipes/raw-weather-clean/clean_weatherapp.sql'
 
 jobs:
   deploy-sql:
