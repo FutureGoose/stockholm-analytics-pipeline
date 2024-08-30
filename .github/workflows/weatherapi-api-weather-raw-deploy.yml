@@ -1,4 +1,4 @@
-name: Deploy API Weather Raw
+name: Deploy weatherapi-api-weather-raw
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     paths:
       - 'pipes/weatherapi-api-weather-raw/**'
 
-      
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
