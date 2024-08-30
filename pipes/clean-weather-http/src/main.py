@@ -38,7 +38,7 @@ def query_bigquery() -> list:
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"BigQuery error: {str(e)}")
 
-@app.get("")
+@app.get("/")
 def predict() -> list:
     """Making a prediction based of the input from BigQuery"""
 
