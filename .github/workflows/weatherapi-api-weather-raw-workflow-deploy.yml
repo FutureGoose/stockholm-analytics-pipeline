@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'pipelines/weatherapi-api-weather-raw-workflow.yml'
 
 jobs:
   deploy-workflow:
