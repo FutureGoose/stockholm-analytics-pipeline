@@ -6,7 +6,7 @@ from fastapi import FastAPI, HTTPException
 from typing import List
 
 # Initialize pytrends request
-pytrends = TrendReq(hl='sv', tz=120)  # tz = minutes offset from UTC
+pytrends = TrendReq(hl='sv', tz=120)  # tz = Central European Summer Time
 
 # Define keywords
 kw_list_1 = ["fläkt", "jacka", "paraply", "solkräm", "badplats"]
