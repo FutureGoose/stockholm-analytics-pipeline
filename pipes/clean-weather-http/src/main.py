@@ -8,7 +8,7 @@ import db_dtypes
 app = FastAPI()
 model = joblib.load("weather_forecasting_model_stockholm_xgb.pkl")
 
-# Defining the expected input columns for the model
+
 expected_columns = [
     "hour", 
     "month", 
@@ -31,7 +31,6 @@ def query_bigquery() -> list:
         LIMIT 24
         """
         
-        # Runs the query and convert to a pandas DataFrame
         df = client.query(query).to_dataframe()
         return df.to_dict(orient="records")
     
@@ -43,7 +42,7 @@ def predict() -> list:
     """Making a prediction based of the input from BigQuery"""
 
     try:
-          # Quering BigQuery as input data
+          
         input_data = query_bigquery()
         
         df = pd.DataFrame(input_data)
