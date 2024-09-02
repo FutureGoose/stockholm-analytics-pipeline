@@ -3,7 +3,6 @@ import requests
 import json
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
-import psycopg2
 import pendulum
 from google.cloud import bigquery
 
