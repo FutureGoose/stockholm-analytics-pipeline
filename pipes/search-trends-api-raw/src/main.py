@@ -1,9 +1,12 @@
 from pytrends.request import TrendReq
 import pandas as pd
 from google.cloud import bigquery
+import pendulum
+from fastapi import FastAPI, HTTPException
+from typing import List
 
 # Initialize pytrends request
-pytrends = TrendReq(hl='sv', tz=120) # tz = minutes offset from UTC
+pytrends = TrendReq(hl='sv', tz=120)  # tz = minutes offset from UTC
 
 # Define keywords
 kw_list_1 = ["fläkt", "jacka", "paraply", "solkräm", "badplats"]
@@ -17,41 +20,44 @@ project_id = 'team_god'
 dataset_id = 'google_trends'
 table_id_prefix = 'search_words'
 
-def fetch_trends_data(kw_list):
+app = FastAPI()
 
+def fetch_trends_data(kw_list: List[str]) -> pd.DataFrame:
+    """
+    Fetch Google Trends data for the given list of keywords.
+    """
     # Payload with settings "all categories", "past 3 months", "Stockholm" and "web searches"
     pytrends.build_payload(kw_list, cat=0, timeframe='today 3-m', geo='SE-AB', gprop='')
-
-    # Get the interest over time (daily data)
     data = pytrends.interest_over_time()
-
-    # Check if there is a 'isPartial' column and drop it if necessary
     if 'isPartial' in data.columns:
         data = data.drop(columns=['isPartial'])
     
+    # Add ingestion timestamp
+    data['ingestion_timestamp'] = pendulum.now().to_datetime_string()
+    
     return data
 
-
-def send_to_bigquery(data, table_suffix):
-
-
-    # Create a BigQuery client
+def send_to_bigquery(data: pd.DataFrame, table_suffix: str) -> None:
+    """
+    Send the fetched trends data to a BigQuery table.
+    """
     client = bigquery.Client(project=project_id)
-
-    # Define the full table ID
     table_id = f"{project_id}.{dataset_id}.{table_id_prefix}_{table_suffix}"
-
-    # Load the data to BigQuery
     job = client.load_table_from_dataframe(data, table_id)
-
-    # Wait for the job to complete
     job.result()
-
     print(f"Data successfully loaded to {table_id}")
 
-# Iterate through the keyword lists
-for idx, kw_list in enumerate(kw_lists):
-    # Fetch the data
-    trends_data = fetch_trends_data(kw_list)
-    # Send the data to BigQuery with a unique table suffix (kw_list_1, kw_list_2, etc.)
-    send_to_bigquery(trends_data, f"kw_list_{idx+1}")
+@app.get("/update_trends")
+def update_trends():
+    """
+    HTTP endpoint to fetch trends data and send it to BigQuery.
+    """
+    try:
+        for idx, kw_list in enumerate(kw_lists):
+            trends_data = fetch_trends_data(kw_list)
+            send_to_bigquery(trends_data, f"kw_list_{idx+1}")
+        return {"status": "Data processing completed"}, 200
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        raise HTTPException(status_code=500, detail=f"An error occurred: {e}")
+
