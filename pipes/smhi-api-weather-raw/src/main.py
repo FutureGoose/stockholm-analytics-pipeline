@@ -9,6 +9,7 @@ from google.cloud import bigquery
 app = FastAPI()
 load_dotenv()
 
+
 def fetch_radiation_data(api_url: str, longitude: str, latitude: str, parameter: str, from_date: str, to_date: str) -> dict:
     """
     Fetches radiation data from API.
