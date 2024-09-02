@@ -29,8 +29,6 @@ def fetch_trends_data(kw_list: List[str]) -> pd.DataFrame:
     # Payload with settings "all categories", "past 3 months", "Stockholm" and "web searches"
     pytrends.build_payload(kw_list, cat=0, timeframe='today 3-m', geo='SE-AB', gprop='')
     data = pytrends.interest_over_time()
-    if 'isPartial' in data.columns:
-        data = data.drop(columns=['isPartial'])
     
     # Add ingestion timestamp
     data['ingestion_timestamp'] = pendulum.now().to_datetime_string()
