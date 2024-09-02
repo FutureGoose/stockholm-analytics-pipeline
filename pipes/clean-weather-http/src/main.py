@@ -19,6 +19,7 @@ expected_columns = [
     "temp_lag_3"
 ]
 
+
 @app.get("/bigquery_test")
 def query_bigquery() -> list:
     """Fetch weather-data from BigQuery"""
@@ -37,6 +38,7 @@ def query_bigquery() -> list:
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"BigQuery error: {str(e)}")
 
+        
 @app.get("/")
 def predict() -> list:
     """Making a prediction based of the input from BigQuery"""
