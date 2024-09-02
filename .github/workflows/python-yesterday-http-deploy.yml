@@ -4,8 +4,8 @@ on:
   push:
     branches:
       - main
-    paths:
-      - 'pipes/python-yesterday-http/**'
+    # paths:
+    #   - 'pipes/python-yesterday-http/**'
 
 jobs:
   deploy:
@@ -18,7 +18,7 @@ jobs:
     - id: 'auth'
       uses: 'google-github-actions/auth@v2'
       with:
-        credentials_json: '${{ secrets.GCP_SA_KEY }}'
+        credentials_json: ${{ secrets.GCP_SA_KEY }}
 
     - name: Deploy to Cloud Functions
       run: |
@@ -32,4 +32,4 @@ jobs:
           --concurrency 2 \
           --max-instances 2 \
           --source ./pipes/python-yesterday-http/src \
-          --service-account 76117246159-compute@developer.gserviceaccount.com
+          --service-account ${{ secrets.GCP_SERVICE_ACCOUNT_EMAIL }}
