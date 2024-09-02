@@ -6,9 +6,7 @@ from fastapi import FastAPI, HTTPException
 from google.cloud import bigquery
 import pendulum
 
-# initialize FastAPI
 app = FastAPI()
-# load environment variables
 load_dotenv()
 
 
