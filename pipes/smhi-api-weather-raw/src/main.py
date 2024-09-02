@@ -57,14 +57,12 @@ def read_and_write_radiation_data(api_url: str, longitude: float, latitude: floa
     """
     Fetches data for six radiation parameters and writes them to BigQuery.
     """
-    # Define the six parameters to fetch
+
     parameters = [116, 117, 118, 120, 121, 122]
     
-    # Get the current date and calculate the date range (from one weeek ago to today)
     to_date = pendulum.today().to_date_string()
     from_date = pendulum.today().subtract(days=7).to_date_string()
 
-    # Loop through each parameter, fetch data, and write to BigQuery
     for parameter in parameters:
         print(f"Fetching data for parameter {parameter}...")
         data = fetch_radiation_data(api_url, longitude, latitude, parameter, from_date, to_date)
@@ -78,14 +76,12 @@ def read_and_write_radiation_data(api_url: str, longitude: float, latitude: floa
 
 @app.get("/")
 def main():
-    # Set up API URL and location details
     API_URL = os.getenv('API_URL') or "https://opendata-download-metanalys.smhi.se/api/category/strang1g/version/1/geotype/point"
     # Longitude and latitude for Stockholm
     longitude = 18.0649
     latitude = 59.33258
 
     try:
-        # Call the function to fetch and write radiation data for all six parameters
         read_and_write_radiation_data(api_url=API_URL, longitude=longitude, latitude=latitude)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error processing data: {e}")
