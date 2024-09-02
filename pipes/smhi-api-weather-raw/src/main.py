@@ -76,7 +76,7 @@ def read_and_write_radiation_data(api_url: str, longitude: float, latitude: floa
 
 @app.get("/")
 def main():
-    API_URL = os.getenv('API_URL') or "https://opendata-download-metanalys.smhi.se/api/category/strang1g/version/1/geotype/point"
+    API_URL = os.getenv('API_URL')
     # Longitude and latitude for Stockholm
     longitude = 18.0649
     latitude = 59.33258
