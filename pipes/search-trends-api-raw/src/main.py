@@ -14,12 +14,12 @@ kw_lists = [kw_list_1, kw_list_2, kw_list_3]
 
 # Define the project and dataset details for BigQuery
 project_id = 'team_god'
-dataset_id = 'your_dataset_id'
-table_id_prefix = 'google_trends'
+dataset_id = 'google_trends'
+table_id_prefix = 'search_words'
 
-# Function to fetch data from Google Trends
 def fetch_trends_data(kw_list):
-    # Create the payload with specific settings (Stockholm)
+
+    # Payload with settings "all categories", "past 3 months", "Stockholm" and "web searches"
     pytrends.build_payload(kw_list, cat=0, timeframe='today 3-m', geo='SE-AB', gprop='')
 
     # Get the interest over time (daily data)
@@ -31,8 +31,10 @@ def fetch_trends_data(kw_list):
     
     return data
 
-# Function to send data to BigQuery
+
 def send_to_bigquery(data, table_suffix):
+
+
     # Create a BigQuery client
     client = bigquery.Client(project=project_id)
 
@@ -51,6 +53,5 @@ def send_to_bigquery(data, table_suffix):
 for idx, kw_list in enumerate(kw_lists):
     # Fetch the data
     trends_data = fetch_trends_data(kw_list)
-
     # Send the data to BigQuery with a unique table suffix (kw_list_1, kw_list_2, etc.)
     send_to_bigquery(trends_data, f"kw_list_{idx+1}")
