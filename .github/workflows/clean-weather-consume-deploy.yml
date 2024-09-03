@@ -31,7 +31,7 @@ jobs:
 
     - name: Build Docker image
       run: |
-        echo "${{ secrets.GCP_SA_KEY }}" > pipes/clean-weather-consume/gcp-key.json
+        echo ${{ secrets.GCP_SA_KEY }} > pipes/clean-weather-consume/gcp-key.json
         docker build -t gcr.io/team-god/clean-weather-consume --build-arg GCP_KEY_FILE=pipes/clean-weather-consume/gcp-key.json pipes/clean-weather-consume
 
     - name: Push Docker image
