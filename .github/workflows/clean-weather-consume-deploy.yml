@@ -1,0 +1,43 @@
+name: Deploy clean-weather-consume
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'pipes/clean-weather-consume/**'
+
+jobs:
+  deploy-workflow:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Authenticate to Google Cloud
+      uses: google-github-actions/auth@v2
+      with:
+        credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+    - name: Set up Google Cloud SDK
+      uses: google-github-actions/setup-gcloud@v2
+      with:
+        project_id: ${{ secrets.GCP_PROJECT_ID }}
+        install_components: 'beta'
+
+    - name: Build and Push Docker Image
+      run: |
+        echo ${{ secrets.GCP_SA_KEY }} > gcp-key.json
+        docker build -t gcr.io/team-god/clean-weather-consume --build-arg GCP_KEY_FILE=gcp-key.json .
+        docker push gcr.io/team-god/clean-weather-consume
+
+    - name: Deploy to Cloud Run
+      run: |
+        gcloud run deploy clean-weather-consume-service \
+          --image gcr.io/team-god/clean-weather-consume \
+          --platform managed \
+          --region europe-north1 \
+          --concurrency 2 \
+          --max-instances 2 \
+          --allow-unauthenticated
