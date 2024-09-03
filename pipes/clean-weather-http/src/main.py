@@ -3,10 +3,8 @@ import joblib
 from fastapi import FastAPI, HTTPException
 import pandas as pd
 
-
 app = FastAPI()
 model = joblib.load("weather_forecasting_model_stockholm_xgb.pkl")
-
 
 expected_columns = [
     "hour", 
@@ -17,7 +15,6 @@ expected_columns = [
     "temp_lag_1", 
     "temp_lag_3"
 ]
-
 
 @app.get("/bigquery_test")
 def query_bigquery() -> list:
@@ -67,4 +64,3 @@ def predict() -> list:
     
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
-
