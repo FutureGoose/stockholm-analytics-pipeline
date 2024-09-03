@@ -3,12 +3,12 @@ name: Deploy clean-weather-consume
 on:
   push:
     branches:
-      - main
-    paths:
-      - 'pipes/clean-weather-consume/**'
+      - model_pipe
+    # paths:
+    #   - 'pipes/clean-weather-consume/**'
 
 jobs:
-  deploy-workflow:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
