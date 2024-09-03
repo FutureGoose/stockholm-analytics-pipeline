@@ -16,7 +16,7 @@ kw_list_3 = ["varm choklad", "glögg", "earl grey", "chai", "ylle"]
 kw_lists = [kw_list_1, kw_list_2, kw_list_3]
 
 # Define the project and dataset details for BigQuery
-project_id = 'team_god'
+project_id = 'team-god'
 dataset_id = 'google_trends'
 table_id_prefix = 'raw_searchwords'
 
@@ -62,3 +62,9 @@ def update_trends():
         print(f"An error occurred: {e}")
         raise HTTPException(status_code=500, detail=f"An error occurred: {e}")
 
+
+# docker build -t gcr.io/team-god/search-trends-api-raw .
+# docker push gcr.io/team-god/search-trends-api-raw
+# gcloud auth configure-docker
+# gcloud run deploy search-trends-api-raw-service --image gcr.io/team-god/search-trends-api-raw --platform managed --region europe-north1 --concurrency 2 --max-instances 2
+# gcloud run services delete SERVICE_NAME --region europe-north1
