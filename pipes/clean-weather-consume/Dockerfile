@@ -1,4 +1,4 @@
-FROM python:3.9-slim
+FROM google/cloud-sdk:slim
 
 WORKDIR /app
 
@@ -10,10 +10,7 @@ COPY src /app/src
 COPY gcp-key.json /app/gcp-key.json
 
 # get model from GCP bucket
-RUN apt-get update && apt-get install -y curl gnupg && \
-    curl https://sdk.cloud.google.com | bash && \
-    /bin/bash -c "source /root/.bashrc" && \
-    gcloud auth activate-service-account --key-file=/app/gcp-key.json && \
+RUN gcloud auth activate-service-account --key-file=/app/gcp-key.json && \
     gsutil cp gs://weather-model/weather_forecasting_model_stockholm_xgb.pkl /app/
 
 CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8080"]
