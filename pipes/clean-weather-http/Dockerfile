@@ -2,12 +2,14 @@ FROM python:3.9-slim
 
 WORKDIR /app
 
-COPY requirements.txt /app/
-
+COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY . /app/
+COPY src /app/src
 
-WORKDIR /app/src
+COPY weather_forecasting_model_stockholm_xgb.pkl /app/
 
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]
+EXPOSE 8080
+
+CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8080", "--reload"]
+
