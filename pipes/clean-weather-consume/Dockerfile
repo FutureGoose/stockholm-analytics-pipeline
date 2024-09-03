@@ -7,6 +7,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY src /app/src
 
+COPY gcp-key.json /app/gcp-key.json
+
 # get model from GCP bucket
 RUN apt-get update && apt-get install -y curl gnupg && \
     curl https://sdk.cloud.google.com | bash && \
