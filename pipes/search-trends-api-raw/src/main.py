@@ -56,7 +56,7 @@ def update_trends():
     try:
         for idx, kw_list in enumerate(kw_lists):
             trends_data = fetch_trends_data(kw_list)
-            send_to_bigquery(trends_data, f"kw_list_{idx+1}")
+            send_to_bigquery(trends_data, f"{idx+1}")
         return {"status": "Data processing completed"}, 200
     except Exception as e:
         print(f"An error occurred: {e}")
