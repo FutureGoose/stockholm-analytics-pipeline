@@ -1,7 +1,6 @@
 from pytrends.request import TrendReq
 import pandas as pd
 from google.cloud import bigquery
-import pendulum
 from fastapi import FastAPI, HTTPException
 from typing import List
 
