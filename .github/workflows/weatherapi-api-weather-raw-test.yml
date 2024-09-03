@@ -12,7 +12,6 @@ on:
     paths:
       - 'pipes/weatherapi-api-weather-raw/src/**'
 
-
 jobs:
   test:
     runs-on: ubuntu-latest

@@ -7,7 +7,6 @@ on:
     paths:
       - 'pipes/weatherapi-api-weather-raw/**'
 
-
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
