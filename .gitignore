@@ -1,6 +1,7 @@
 Zone.Identifier
 secrets/
 venv
+env
 data/
 *.csv
 *.pkl

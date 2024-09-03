@@ -2,7 +2,6 @@ from google.cloud import bigquery
 import joblib
 from fastapi import FastAPI, HTTPException
 import pandas as pd
-import db_dtypes
 
 
 app = FastAPI()
