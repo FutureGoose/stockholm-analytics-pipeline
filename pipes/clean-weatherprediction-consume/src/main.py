@@ -23,7 +23,7 @@ def query_bigquery() -> list:
         client = bigquery.Client()
         
         query = """
-        SELECT hour, month, temp, humidity, pressure, temp_lag_1, temp_lag_3 
+        SELECT hour, month, temp, humidity, pressure, temp_lag_1, temp_lag_3, temp_time
         FROM `team-god.weather_data.clean_weatherapp` 
         LIMIT 24
         """
@@ -40,7 +40,6 @@ def predict() -> list:
     """Making a prediction based of the input from BigQuery"""
 
     try:
-          
         input_data = query_bigquery()
         
         df = pd.DataFrame(input_data)
@@ -50,7 +49,7 @@ def predict() -> list:
         prediction_results = predictions.tolist()
 
         combined_results = [
-            {"hour": input_row["hour"], "prediction": prediction}
+            {"datetime": input_row["temp_time"], "prediction": prediction}
             for input_row, prediction in zip(input_data, prediction_results)
         ]
 
@@ -64,3 +63,9 @@ def predict() -> list:
     
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
+
+
+# docker build -t gcr.io/team-god/ml-model-service .
+# docker push gcr.io/team-god/ml-model-service
+# gcloud auth configure-docker
+# gcloud run deploy ml-model-service --image gcr.io/team-god/ml-model-service --platform managed --region europe-north1 --concurrency 2 --max-instances 2 --alow-unauthenticated
