@@ -3,9 +3,9 @@ name: Deploy clean-weatherprediction-consume-workflow.yml
 on:
   push:
     branches:
-      - model_pipe
-    # paths:
-    #   - 'pipelines/clean-weatherprediction-consume-workflow.yml'
+      - main
+    paths:
+      - 'pipelines/clean-weatherprediction-consume-workflow.yml'
 
 jobs:
   deploy-workflow:
