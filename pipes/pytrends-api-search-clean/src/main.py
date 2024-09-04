@@ -65,7 +65,5 @@ def update_trends():
 # docker build -t gcr.io/team-god/pytrends-api-search-clean .
 # docker push gcr.io/team-god/pytrends-api-search-clean
 # gcloud auth configure-docker
-# gcloud run deploy pytrends-api-search-clean-service --image gcr.io/team-god/pytrends-api-search-clean --platform managed --region europe-north1 --concurrency 2 --max-instances 2 --allow-unauthenticated
+# gcloud run deploy pytrends-api-search-clean-service --image gcr.io/team-god/pytrends-api-search-clean --platform managed --region europe-north1 --concurrency 2 --max-instances 2
 # gcloud run services delete SERVICE_NAME --region europe-north1
-
-# gcloud run deploy search-trends-api-raw-service  --image gcr.io/team-god/pytrends-api-search-clean --platform managed --region europe-north1 --concurrency 2 --max-instances 2 --allow-unauthenticated
