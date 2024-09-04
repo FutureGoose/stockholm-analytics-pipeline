@@ -3,6 +3,7 @@ import pandas as pd
 from google.cloud import bigquery
 from fastapi import FastAPI, HTTPException
 from typing import List
+import pendulum
 
 # Initialize pytrends request
 pytrends = TrendReq(hl='sv', tz=120)  # tz = Central European Summer Time
@@ -30,7 +31,7 @@ def fetch_trends_data(kw_list: List[str]) -> pd.DataFrame:
     data = pytrends.interest_over_time()
     
     # Add ingestion timestamp
-    # data['ingestion_timestamp'] = pendulum.now().to_datetime_string()
+    data['ingestion_timestamp'] = pendulum.now().to_datetime_string()
 
     # Rename columns to replace spaces with underscores
     data.columns = [col.replace(' ', '_') for col in data.columns]
