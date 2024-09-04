@@ -11,10 +11,12 @@ RUN apt-get update && apt-get install -y python3-venv && \
 
 COPY src /app/src
 
-COPY gcp-key.json /app/gcp-key.json
+#COPY gcp-key.json /app/gcp-key.json
+
+ENV GOOGLE_APPLICATION_CREDENTIALS=secrets.GCP_SA_KEY
 
 # get model from bucket
-RUN gcloud auth activate-service-account --key-file=/app/gcp-key.json && \
+RUN gcloud auth activate-service-account && \
     gsutil cp gs://weather-model/weather_forecasting_model_stockholm_xgb.pkl /app/
 
 CMD ["venv/bin/uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8080"]
