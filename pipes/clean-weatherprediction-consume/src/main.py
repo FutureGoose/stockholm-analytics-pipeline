@@ -17,7 +17,7 @@ expected_columns = [
 ]
 
 @app.get("/bigquery_test")
-def query_bigquery() -> list:
+def read() -> list:
     """Fetch weather-data from BigQuery"""
     try:
         client = bigquery.Client()
@@ -40,7 +40,7 @@ def predict() -> list:
     """Making a prediction based of the input from BigQuery"""
 
     try:
-        input_data = query_bigquery()
+        input_data = read()
         
         df = pd.DataFrame(input_data)
         df = df[expected_columns]
