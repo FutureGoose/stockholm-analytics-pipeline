@@ -30,8 +30,8 @@ def fetch_trends_data(kw_list: List[str]) -> pd.DataFrame:
     pytrends.build_payload(kw_list, cat=0, timeframe='today 3-m', geo='SE-AB', gprop='')
     data = pytrends.interest_over_time()
     
-    # Add ingestion timestamp
-    data['ingestion_timestamp'] = pendulum.now().to_datetime_string()
+    # Add ingestion timestamp as a datetime object
+    data['ingestion_timestamp'] = pd.to_datetime(pendulum.now().to_datetime_string())
 
     # Rename columns to replace spaces with underscores
     data.columns = [col.replace(' ', '_') for col in data.columns]
@@ -63,8 +63,10 @@ def update_trends():
         raise HTTPException(status_code=500, detail=f"An error occurred: {e}")
 
 
-# docker build -t gcr.io/team-god/search-trends-api-raw .
-# docker push gcr.io/team-god/search-trends-api-raw
+# docker build -t gcr.io/team-god/pytrends-api-search-clean .
+# docker push gcr.io/team-god/pytrends-api-search-clean
 # gcloud auth configure-docker
-# gcloud run deploy search-trends-api-raw-service --image gcr.io/team-god/search-trends-api-raw --platform managed --region europe-north1 --concurrency 2 --max-instances 2
+# gcloud run deploy pytrends-api-search-clean-service --image gcr.io/team-god/pytrends-api-search-clean --platform managed --region europe-north1 --concurrency 2 --max-instances 2 --allow-unauthenticated
 # gcloud run services delete SERVICE_NAME --region europe-north1
+
+# gcloud run deploy search-trends-api-raw-service  --image gcr.io/team-god/pytrends-api-search-clean --platform managed --region europe-north1 --concurrency 2 --max-instances 2 --allow-unauthenticated
