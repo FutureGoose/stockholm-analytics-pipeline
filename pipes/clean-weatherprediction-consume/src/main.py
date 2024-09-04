@@ -74,10 +74,13 @@ def write(json_data: dict) -> None:
     table_id = "team-god.weather_data.predictions_weatherapp"
     table = client.get_table(table_id)
 
+    current_timestamp = datetime.utcnow().isoformat()
+
     rows_to_insert = [
         {
             "datetime": datetime.strptime(hour['datetime'], "%Y-%m-%d %H:%M").isoformat(),
-            "prediction": hour['prediction']
+            "prediction": hour['prediction'],
+            "timestamp": current_timestamp
         }
         for hour in json_data
     ]
