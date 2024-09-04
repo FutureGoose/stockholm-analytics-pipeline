@@ -71,7 +71,7 @@ def write(json_data: dict) -> None:
     Unpacks json and sends the data to BigQuery table.
     """
     client = bigquery.Client()
-    table_id = "team-god.weather_data.predictions_weatherapp"
+    table_id = "team-god.weather_data.raw_predictions_weatherapp"
     table = client.get_table(table_id)
 
     current_timestamp = datetime.utcnow().isoformat()
