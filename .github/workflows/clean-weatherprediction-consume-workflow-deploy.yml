@@ -30,4 +30,5 @@ jobs:
       run: |
         gcloud workflows deploy weather-prediction-workflow \
           --source pipelines/clean-weatherprediction-consume-workflow.yml \
-          --location europe-north1
+          --location europe-north1 \
+          --call-log-level=log-all-calls
