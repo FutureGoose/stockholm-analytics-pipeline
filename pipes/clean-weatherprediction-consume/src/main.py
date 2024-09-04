@@ -3,6 +3,7 @@ import joblib
 from fastapi import FastAPI, HTTPException
 import pandas as pd
 from datetime import datetime
+import pytz
 
 app = FastAPI()
 model = joblib.load("weather_forecasting_model_stockholm_xgb.pkl")
@@ -74,13 +75,15 @@ def write(json_data: dict) -> None:
     table_id = "team-god.weather_data.raw_predictions_weatherapp"
     table = client.get_table(table_id)
 
-    current_timestamp = datetime.utcnow().isoformat()
+    utc_now = datetime.utcnow()
+    stockholm_tz = pytz.timezone('Europe/Stockholm')
+    stockholm_now = utc_now.astimezone(stockholm_tz).isoformat()
 
     rows_to_insert = [
         {
             "datetime": datetime.strptime(hour['datetime'], "%Y-%m-%d %H:%M").isoformat(),
             "prediction": hour['prediction'],
-            "timestamp": current_timestamp
+            "timestamp": stockholm_now
         }
         for hour in json_data
     ]
