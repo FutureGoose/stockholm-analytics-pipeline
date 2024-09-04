@@ -83,10 +83,8 @@ def read(location: str, date: str) -> dict:
 
 @app.get("/")
 def main(location: str, date: str):
-    # call read function to fetch data
     data = read(location, date)
 
-    # call write function, send data to BigQuery
     try:
         data=write(data)
     except Exception as e:
