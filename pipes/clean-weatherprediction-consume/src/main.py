@@ -75,9 +75,9 @@ def write(json_data: dict) -> None:
     table_id = "team-god.weather_data.raw_predictions_weatherapp"
     table = client.get_table(table_id)
 
-    utc_now = datetime.utcnow()
+    utc_now = datetime.now(pytz.utc)
     stockholm_tz = pytz.timezone('Europe/Stockholm')
-    stockholm_now = utc_now.astimezone(stockholm_tz).isoformat()
+    stockholm_now = utc_now.astimezone(stockholm_tz)
 
     rows_to_insert = [
         {
