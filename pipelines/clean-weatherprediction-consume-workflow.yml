@@ -24,9 +24,3 @@ main:
             steps:
               - handleError:
                   raise: '${"Error in workflow execution: " + PipelineResponse.content.message}'
-
-triggers:
-  - name: weather-ingestion-schedule-daily
-    schedule: "0 6 * * *"
-    timezone: "Europe/Stockholm"
-    region: "europe-west1"
