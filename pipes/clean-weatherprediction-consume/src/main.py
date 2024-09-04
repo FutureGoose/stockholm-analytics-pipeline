@@ -2,6 +2,7 @@ from google.cloud import bigquery
 import joblib
 from fastapi import FastAPI, HTTPException
 import pandas as pd
+from datetime import datetime
 
 app = FastAPI()
 model = joblib.load("weather_forecasting_model_stockholm_xgb.pkl")
@@ -75,7 +76,7 @@ def write(json_data: dict) -> None:
 
     rows_to_insert = [
         {
-            "datetime": hour['datetime'],
+            "datetime": datetime.strptime(hour['datetime'], "%Y-%m-%d %H:%M").isoformat(),
             "prediction": hour['prediction']
         }
         for hour in json_data
