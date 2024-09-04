@@ -6,11 +6,6 @@ on:
       - main
     paths:
       - 'pipes/clean-weatherprediction-consume/**'
-  pull_request:
-    branches:
-      - main
-    paths:
-      - 'pipes/clean-weatherprediction-consume/**'
 
 jobs:
   build-and-deploy:
