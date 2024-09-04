@@ -34,7 +34,9 @@ def fetch_trends_data(kw_list: List[str]) -> pd.DataFrame:
     data['ingestion_timestamp'] = pd.to_datetime(pendulum.now().to_datetime_string())
 
     # Rename columns to replace spaces with underscores
-    data.columns = [col.replace(' ', '_') for col in data.columns]
+    data.columns = [col.replace('å', 'a').replace('ä', 'a').replace('ö', 'o').replace(' ', '_') for col in data.columns]
+
+    # Rename columns to replace 
     
     return data
 
