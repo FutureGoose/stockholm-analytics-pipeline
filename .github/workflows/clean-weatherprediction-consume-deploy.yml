@@ -4,8 +4,8 @@ on:
   push:
     branches:
       - main
-    paths:
-      - 'pipes/clean-weatherprediction-consume/**'
+    # paths:
+    #   - 'pipes/clean-weatherprediction-consume/**'
 
 jobs:
   build-and-deploy:

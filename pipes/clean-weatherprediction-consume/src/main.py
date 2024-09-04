@@ -35,7 +35,7 @@ def read() -> list:
         raise HTTPException(status_code=500, detail=f"BigQuery error: {str(e)}")
 
         
-@app.get("/")
+@app.get("/predict")
 def predict() -> list:
     """Making a prediction based of the input from BigQuery"""
 
@@ -63,3 +63,37 @@ def predict() -> list:
     
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
+    
+
+def write(json_data: dict) -> None:
+    """
+    Unpacks json and sends the data to BigQuery table.
+    """
+    client = bigquery.Client()
+    table_id = "team-god.weather_data.predictions_weatherapp"
+    table = client.get_table(table_id)
+
+    rows_to_insert = [
+        {
+            "datetime": hour['datetime'],
+            "prediction": hour['prediction']
+        }
+        for hour in json_data['datetime']
+    ]
+
+    errors = client.insert_rows(table, rows_to_insert)
+    if errors:
+        raise Exception(f"Failed to insert rows: {errors}")
+    print(f'Inserted {len(rows_to_insert)} rows')
+
+
+@app.get("/")
+def main():
+    data = predict()
+
+    try:
+        data=write(data)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Insert to BigQuery failed: {e}")
+    
+    return {"status_code": 200}
