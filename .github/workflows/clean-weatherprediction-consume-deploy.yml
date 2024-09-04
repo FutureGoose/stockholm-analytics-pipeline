@@ -3,14 +3,14 @@ name: Deploy clean-weather-consume
 on:
   push:
     branches:
-      - model_pipe
-  #   paths:
-  #     - 'pipes/clean-weatherprediction-consume/**'
-  # pull_request:
-  #   branches:
-  #     - main
-  #   paths:
-  #     - 'pipes/clean-weatherprediction-consume/**'
+      - main
+    paths:
+      - 'pipes/clean-weatherprediction-consume/**'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'pipes/clean-weatherprediction-consume/**'
 
 jobs:
   build-and-deploy:
