@@ -27,7 +27,7 @@ jobs:
         install_components: 'beta'
 
     - name: Configure Docker
-      run: gcloud auth configure-docker
+      run: gcloud auth configure-docker gcr.io
 
     - name: Install jq
       run: sudo apt-get install -y jq
