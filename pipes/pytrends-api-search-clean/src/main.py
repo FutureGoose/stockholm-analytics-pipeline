@@ -18,7 +18,7 @@ kw_lists = [kw_list_1, kw_list_2, kw_list_3]
 # Define the project and dataset details for BigQuery
 project_id = 'team-god'
 dataset_id = 'google_trends'
-table_id_prefix = 'raw_searchwords'
+table_id_prefix = 'searchwords'
 
 app = FastAPI()
 
