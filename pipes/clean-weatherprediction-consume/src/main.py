@@ -78,7 +78,7 @@ def write(json_data: dict) -> None:
             "datetime": hour['datetime'],
             "prediction": hour['prediction']
         }
-        for hour in json_data['datetime']
+        for hour in json_data
     ]
 
     errors = client.insert_rows(table, rows_to_insert)
