@@ -16,7 +16,7 @@ COPY src /app/src
 ENV GOOGLE_APPLICATION_CREDENTIALS=secrets.GCP_SA_KEY
 
 # get model from bucket
-RUN gcloud auth activate-service-account && \
+RUN gcloud auth activate-service-account key-file=secrets.GCP_SA_KEY && \
     gsutil cp gs://weather-model/weather_forecasting_model_stockholm_xgb.pkl /app/
 
 CMD ["venv/bin/uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8080"]
