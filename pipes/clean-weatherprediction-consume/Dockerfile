@@ -1,4 +1,3 @@
-# prepackaged tools to access gcp
 FROM google/cloud-sdk:slim
 
 WORKDIR /app
@@ -13,7 +12,6 @@ COPY src /app/src
 
 COPY gcp-key.json /app/gcp-key.json
 
-# get model from bucket
 RUN . venv/bin/activate && \
     gcloud auth activate-service-account --key-file=/app/gcp-key.json && \
     gsutil cp gs://weather-model/weather_forecasting_model_stockholm_xgb.pkl /app/
