@@ -63,9 +63,3 @@ def predict() -> list:
     
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
-
-
-# docker build -t gcr.io/team-god/ml-model-service .
-# docker push gcr.io/team-god/ml-model-service
-# gcloud auth configure-docker
-# gcloud run deploy ml-model-service --image gcr.io/team-god/ml-model-service --platform managed --region europe-north1 --concurrency 2 --max-instances 2 --alow-unauthenticated
