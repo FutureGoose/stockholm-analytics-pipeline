@@ -1,0 +1,26 @@
+main:
+  params: []
+  steps:
+    - getYesterdayDate:
+        call: http.get
+        args:
+          url: https://europe-west1-team-god.cloudfunctions.net/python-yesterday-http
+        result: yesterdayDate
+    - extractDate:
+        assign:
+          - yesterdayDateString: ${yesterdayDate.body.date}
+    - predictAndStoreWeatherData:
+        call: http.get
+        args:
+          url: https://clean-weatherprediction-consume-service-76117246159.europe-north1.run.app
+        result: PipelineResponse
+    - validatePipelineResponse:
+        switch:
+          - condition: ${PipelineResponse.body.status_code == 200}
+            steps:
+              - workflow_end:
+                  return: 'Workflow executed successfully'
+          - condition: ${PipelineResponse.body.status_code != 200}
+            steps:
+              - handleError:
+                  raise: '${"Error in workflow execution: " + PipelineResponse.content.message}'
