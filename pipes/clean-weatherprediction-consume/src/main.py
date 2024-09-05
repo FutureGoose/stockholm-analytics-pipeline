@@ -39,7 +39,7 @@ def read() -> list:
         
 @app.get("/predict")
 def predict() -> list:
-    """Making a prediction based of the input from BigQuery"""
+    """Making a prediction based on the input from BigQuery"""
 
     try:
         input_data = read()
