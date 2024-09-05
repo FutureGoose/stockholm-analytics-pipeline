@@ -3,9 +3,9 @@ name: Deploy weatherapi-api-weather-raw
 on:
   push:
     branches:
-      - model_pipe
-    # paths:
-    #   - 'pipes/weatherapi-api-weather-raw/**'
+      - main
+    paths:
+      - 'pipes/weatherapi-api-weather-raw/**'
 
 jobs:
   build-and-deploy:
