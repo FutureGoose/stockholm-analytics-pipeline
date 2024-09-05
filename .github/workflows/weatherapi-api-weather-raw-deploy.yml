@@ -43,5 +43,5 @@ jobs:
           --region europe-north1 \
           --concurrency 2 \
           --max-instances 2 \
-          --allow-unauthenticated
+          --allow-unauthenticated \
           --set-env-vars API_URL=${{ secrets.API_URL }},API_KEY=${{ secrets.API_KEY }}
