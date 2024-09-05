@@ -12,7 +12,6 @@ on:
     paths:
       - 'pipes/weatherapi-api-weather-raw/src/**'
 
-
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -30,6 +29,11 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r pipes/weatherapi-api-weather-raw/requirements.txt
+
+    - name: Set environment variables
+      run: |
+        echo "API_URL=${{ secrets.WEATHER_API_URL }}" >> $GITHUB_ENV
+        echo "API_KEY=${{ secrets.WEATHER_API_KEY }}" >> $GITHUB_ENV
 
     - name: Run Tests
       run: |

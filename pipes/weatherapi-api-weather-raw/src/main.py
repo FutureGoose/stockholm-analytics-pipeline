@@ -83,20 +83,11 @@ def read(location: str, date: str) -> dict:
 
 @app.get("/")
 def main(location: str, date: str):
-    # call read function to fetch data
     data = read(location, date)
 
-    # call write function, send data to BigQuery
     try:
         data=write(data)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Insert to BigQuery failed: {e}")
     
     return {"status_code": 200}
-
-
-# docker build -t gcr.io/team-god/weatherapi-api-weather-raw .
-# docker push gcr.io/team-god/weatherapi-api-weather-raw
-# gcloud auth configure-docker
-# gcloud run deploy weatherapi-api-weather-raw-service --image gcr.io/team-god/weatherapi-api-weather-raw --platform managed --region europe-north1 --concurrency 2 --max-instances 2
-# gcloud run services delete SERVICE_NAME --region europe-north1
