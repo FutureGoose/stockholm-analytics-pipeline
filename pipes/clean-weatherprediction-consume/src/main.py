@@ -29,6 +29,7 @@ def read() -> list:
             LIMIT 24
             """
             df = client.query(query).to_dataframe()
+            
             return df.to_dict(orient="records")
     
     except Exception as e:
