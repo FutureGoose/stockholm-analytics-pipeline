@@ -25,6 +25,8 @@ def process_dataset(dataset, output_dir):
         table_id = table['tableReference']['tableId']
         table_info = run_bq_command(f"bq show --format=prettyjson {dataset}.{table_id}")
         if table_info is not None:
+            output_dir = output_dir / dataset
+            output_dir.mkdir(exist_ok=True)
             file_path = output_dir / f"{table_id}.json"
             save_json_to_file(table_info, file_path)
 
