@@ -11,6 +11,7 @@ from main import write
 class TestWriteFunction(unittest.TestCase):
 
     def setUp(self):
+        """Set up sample JSON data"""
         self.json_data = {
             "location": {"localtime": "2024-08-30 16:57"},
             "hour": [
@@ -20,6 +21,7 @@ class TestWriteFunction(unittest.TestCase):
         }
 
     def mock_bigquery_setup(self, mock_bigquery_client, insert_rows_return_value):
+        """Mock BigQuery client setup"""
         mock_client_instance = Mock()
         mock_bigquery_client.return_value = mock_client_instance
         mock_table = Mock()
@@ -29,6 +31,7 @@ class TestWriteFunction(unittest.TestCase):
 
     @patch('main.bigquery.Client')
     def test_write_function(self, mock_bigquery_client):
+        """Test write function with successful insertion"""
         mock_client_instance, mock_table = self.mock_bigquery_setup(mock_bigquery_client, [])
 
         write(self.json_data)
@@ -52,6 +55,7 @@ class TestWriteFunction(unittest.TestCase):
 
     @patch('main.bigquery.Client')
     def test_write_function_with_errors(self, mock_bigquery_client):
+        """Test write function with insertion errors"""
         mock_client_instance, mock_table = self.mock_bigquery_setup(mock_bigquery_client, ["Error inserting rows"])
 
         with self.assertRaises(Exception) as context:
