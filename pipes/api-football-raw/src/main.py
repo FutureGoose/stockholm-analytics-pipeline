@@ -74,8 +74,6 @@ def fetch_and_store_statistics(api_key: str, fixture_ids: list) -> None:
             # Store statistics data into BigQuery for each fixture
             write_to_bigquery(table_id, data['response'], fixture_id)
         
-        # To ensure 10 requests per minute, pause after each request
-        time.sleep(6)  # Sleep for 6 seconds between requests
 
 # --- Fetch Fixture Details and Write to BigQuery ---
 def fetch_and_store_fixtures(api_key: str, team_id: int, venue_id: int, limit: int) -> list:
@@ -88,7 +86,7 @@ def fetch_and_store_fixtures(api_key: str, team_id: int, venue_id: int, limit: i
 
     params = {
         # "team": team_id,
-        "last": 75,
+        "last": limit,
         "venue": venue_id
     }
 
@@ -110,15 +108,17 @@ def main():
     # Get API Key and other details from environment
     api_key = os.getenv('API_KEY')
     team_id = 363  # The team ID
-    venue_id = 1506  # The venue ID to filter by
-    limit = 75  # Fetch the last 50 games
+    venue_id = 1506  # Tele2 Arena
+    limit = 25  # Fetch the last 50 games
 
     if not api_key:
         raise HTTPException(status_code=500, detail="API_KEY not set")
 
     try:
         # Fetch and store fixture details, and get list of fixture IDs for the last 50 games at the venue
-        fixture_ids = fetch_and_store_fixtures(api_key=api_key, team_id=team_id, venue_id=venue_id, limit=limit)
+        # fixture_ids = fetch_and_store_fixtures(api_key=api_key, team_id=team_id, venue_id=venue_id, limit=limit)
+        fixture_ids = fetch_and_store_fixtures(api_key=api_key, team_id=team_id, venue=venue_id, limit=limit)
+
 
         # Fetch and store fixture statistics for the filtered games
         fetch_and_store_statistics(api_key=api_key, fixture_ids=fixture_ids)
