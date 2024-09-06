@@ -14,7 +14,7 @@ def run_bq_command(command):
 
 def save_json_to_file(data, file_path):
     with open(file_path, 'w') as json_file:
-        json.dump(data, json_file, indent=2)
+        json.dump(data, json_file, indent=4)
 
 
 def process_dataset(dataset, output_dir):
@@ -22,13 +22,14 @@ def process_dataset(dataset, output_dir):
     if tables is None:
         return
     
+    dataset_dir = output_dir / dataset
+    dataset_dir.mkdir(exist_ok=True)
+    
     for table in tqdm(tables, desc=f"Processing tables in {dataset}", leave=False):
         table_id = table['tableReference']['tableId']
         table_info = run_bq_command(f"bq show --format=prettyjson {dataset}.{table_id}")
         if table_info is not None:
-            output_dir = output_dir / dataset
-            output_dir.mkdir(exist_ok=True)
-            file_path = output_dir / f"{table_id}.json"
+            file_path = dataset_dir / f"{table_id}.json"
             save_json_to_file(table_info, file_path)
 
 
