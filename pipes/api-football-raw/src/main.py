@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
 from google.cloud import bigquery
 import pendulum
+import time
 
 # initialize FastAPI
 app = FastAPI()
@@ -51,7 +52,6 @@ def write_to_bigquery(table_id: str, json_data: dict, fixture_id: int) -> None:
 
 
 
-# --- Fetch Fixture Statistics and Write to BigQuery ---
 def fetch_and_store_statistics(api_key: str, fixture_ids: list) -> None:
     """
     Fetches fixture statistics for the last 50 games and stores them in BigQuery.
@@ -59,16 +59,23 @@ def fetch_and_store_statistics(api_key: str, fixture_ids: list) -> None:
     endpoint = "fixtures/statistics"
     table_id = "team-god.football_data.raw_fixture_statistics"
 
-    for fixture_id in fixture_ids:
+    for i, fixture_id in enumerate(fixture_ids):
+        if i > 0 and i % 10 == 0:
+            print("Pausing for 60 seconds to avoid exceeding rate limit...")
+            time.sleep(60)  # Pause for 60 seconds after every 10 requests
+
         params = {
             "fixture": fixture_id
         }
 
         data = fetch_data(endpoint, api_key, params)
-        
+
         if data['response']:
             # Store statistics data into BigQuery for each fixture
             write_to_bigquery(table_id, data['response'], fixture_id)
+        
+        # To ensure 10 requests per minute, pause after each request
+        time.sleep(6)  # Sleep for 6 seconds between requests
 
 # --- Fetch Fixture Details and Write to BigQuery ---
 def fetch_and_store_fixtures(api_key: str, team_id: int, venue_id: int, limit: int) -> list:
@@ -80,8 +87,8 @@ def fetch_and_store_fixtures(api_key: str, team_id: int, venue_id: int, limit: i
     table_id = "team-god.football_data.raw_fixture_details"
 
     params = {
-        "team": team_id,
-        "last": limit,
+        # "team": team_id,
+        "last": 75,
         "venue": venue_id
     }
 
@@ -104,7 +111,7 @@ def main():
     api_key = os.getenv('API_KEY')
     team_id = 363  # The team ID
     venue_id = 1506  # The venue ID to filter by
-    limit = 3  # Fetch the last 50 games
+    limit = 75  # Fetch the last 50 games
 
     if not api_key:
         raise HTTPException(status_code=500, detail="API_KEY not set")
