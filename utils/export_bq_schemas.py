@@ -32,7 +32,6 @@ def process_dataset(dataset, output_dir):
 def list_datasets():
     datasets = run_bq_command("bq ls --format=prettyjson")
     if datasets is None:
-        print("Error listing datasets")
         return []
     return [dataset['datasetReference']['datasetId'] for dataset in datasets]
 
