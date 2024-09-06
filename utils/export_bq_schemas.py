@@ -8,20 +8,30 @@ def run_bq_command(command: str) -> Optional[Dict[str, Any]]:
     """
     Executes a bq command and returns the output as a JSON object.
     """
-    result = subprocess.run(command, shell=True, capture_output=True, text=True)
-    if result.returncode != 0:
-        print(f"Error running command: {command}")
-        print(result.stderr)
+    try:
+        result = subprocess.run(command, shell=True, capture_output=True, text=True)
+        if result.returncode != 0:
+            print(f"Error running command: {command}")
+            print(result.stderr)
+            return None
+        return json.loads(result.stdout)
+    except subprocess.SubprocessError as e:
+        print(f"Subprocess error: {e}")
         return None
-    return json.loads(result.stdout)
+    except json.JSONDecodeError as e:
+        print(f"JSON decode error: {e}")
+        return None
 
 
 def save_json_to_file(data: Dict[str, Any], file_path: Path) -> None:
     """
     Saves JSON data to a specified file.
     """
-    with open(file_path, 'w') as json_file:
-        json.dump(data, json_file, indent=2)
+    try:
+        with open(file_path, 'w') as json_file:
+            json.dump(data, json_file, indent=2)
+    except IOError as e:
+        print(f"IO error when writing to file {file_path}: {e}")
 
 
 def process_dataset(dataset: str, output_dir: Path) -> None:
@@ -33,7 +43,11 @@ def process_dataset(dataset: str, output_dir: Path) -> None:
         return
     
     dataset_dir = output_dir / dataset
-    dataset_dir.mkdir(parents=True, exist_ok=True)
+    try:
+        dataset_dir.mkdir(parents=True, exist_ok=True)
+    except IOError as e:
+        print(f"IO error when creating directory {dataset_dir}: {e}")
+        return
     
     for table in tqdm(tables, desc=f"Processing tables in {dataset}", leave=False):
         table_id = table['tableReference']['tableId']
@@ -53,14 +67,17 @@ def list_datasets() -> List[str]:
     return [dataset['datasetReference']['datasetId'] for dataset in datasets]
 
 
-def main() -> None:
+def main():
     output_dir = Path("database_schemas")
-    output_dir.mkdir(exist_ok=True)
+    try:
+        output_dir.mkdir(exist_ok=True)
+    except IOError as e:
+        print(f"IO error when creating directory {output_dir}: {e}")
+        return
 
     datasets = list_datasets()
     for dataset in tqdm(datasets, desc="Processing datasets"):
         process_dataset(dataset, output_dir)
-
 
 if __name__ == "__main__":
     main()
