@@ -22,16 +22,14 @@ expected_columns = [
 def read() -> list:
     """Fetch weather-data from BigQuery"""
     try:
-        client = bigquery.Client()
-        
-        query = """
-        SELECT hour, month, temp, humidity, pressure, temp_lag_1, temp_lag_3, temp_time
-        FROM `team-god.weather_data.clean_weatherapp` 
-        LIMIT 24
-        """
-        
-        df = client.query(query).to_dataframe()
-        return df.to_dict(orient="records")
+        with bigquery.Client() as client:
+            query = """
+            SELECT hour, month, temp, humidity, pressure, temp_lag_1, temp_lag_3, temp_time
+            FROM `team-god.weather_data.clean_weatherapp` 
+            LIMIT 24
+            """
+            df = client.query(query).to_dataframe()
+            return df.to_dict(orient="records")
     
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"BigQuery error: {str(e)}")
