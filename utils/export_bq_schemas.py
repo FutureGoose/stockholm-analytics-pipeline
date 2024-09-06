@@ -29,17 +29,19 @@ def process_dataset(dataset, output_dir):
             save_json_to_file(table_info, file_path)
 
 
-def main():
-    datasets = [
-        "football_data",
-        "google_trends",
-        "radiation_data",
-        "weather_and_radiation"
-    ]
+def list_datasets():
+    datasets = run_bq_command("bq ls --format=prettyjson")
+    if datasets is None:
+        print("Error listing datasets")
+        return []
+    return [dataset['datasetReference']['datasetId'] for dataset in datasets]
 
+
+def main():
     output_dir = Path("database_schemas")
     output_dir.mkdir(exist_ok=True)
 
+    datasets = list_datasets()
     for dataset in datasets:
         process_dataset(dataset, output_dir)
 
