@@ -1,14 +1,6 @@
 main:
   params: []
   steps:
-    - getYesterdayDate:
-        call: http.get
-        args:
-          url: https://europe-west1-team-god.cloudfunctions.net/python-yesterday-http
-        result: yesterdayDate
-    - extractDate:
-        assign:
-          - yesterdayDateString: ${yesterdayDate.body.date}
     - predictAndStoreWeatherData:
         call: http.get
         args:
