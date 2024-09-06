@@ -2,20 +2,15 @@ main:
   params: []
   steps:
     - getYesterdayDate:
-        call: http.get
-        args:
-          url: https://europe-west1-team-god.cloudfunctions.net/python-yesterday-http
-        result: yesterdayDate
-    - extractDate:
         assign:
-          - yesterdayDateString: ${yesterdayDate.body.date}
+            - yesterday: ${text.substring(time.format(sys.now() - 86400, "Europe/Stockholm"), 0, 10)}
     - retrieveAndStoreWeatherData:
         call: http.get
         args:
           url: https://weatherapi-api-weather-raw-service-5d5xhd46ea-lz.a.run.app
           query:
             location: "Stockholm"
-            date: ${yesterdayDateString}
+            date: ${yesterday}
         result: PipelineResponse
     - validatePipelineResponse:
         switch:
