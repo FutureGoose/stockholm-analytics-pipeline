@@ -1,6 +1,7 @@
 import subprocess
 import json
 from pathlib import Path
+from tqdm import tqdm
 
 def run_bq_command(command):
     result = subprocess.run(command, shell=True, capture_output=True, text=True)
@@ -21,7 +22,7 @@ def process_dataset(dataset, output_dir):
     if tables is None:
         return
     
-    for table in tables:
+    for table in tqdm(tables, desc=f"Processing tables in {dataset}", leave=False):
         table_id = table['tableReference']['tableId']
         table_info = run_bq_command(f"bq show --format=prettyjson {dataset}.{table_id}")
         if table_info is not None:
@@ -43,7 +44,7 @@ def main():
     output_dir.mkdir(exist_ok=True)
 
     datasets = list_datasets()
-    for dataset in datasets:
+    for dataset in tqdm(datasets, desc="Processing datasets"):
         process_dataset(dataset, output_dir)
 
 
