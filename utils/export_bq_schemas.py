@@ -14,7 +14,7 @@ def run_bq_command(command):
 
 def save_json_to_file(data, file_path):
     with open(file_path, 'w') as json_file:
-        json.dump(data, json_file, indent=4)
+        json.dump(data, json_file, indent=2)
 
 
 def process_dataset(dataset, output_dir):
