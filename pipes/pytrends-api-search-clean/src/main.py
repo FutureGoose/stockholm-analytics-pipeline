@@ -9,16 +9,17 @@ import pendulum
 pytrends = TrendReq(hl='sv', tz=120)  # tz = Central European Summer Time
 
 # Define keywords
-kw_list_1 = ["fläkt", "jacka", "paraply", "solkräm", "badplats"]
-kw_list_2 = ["choklad", "glass", "grill", "jordgubbar", "potatis"]
-kw_list_3 = ["varm choklad", "glögg", "earl grey", "chai", "ylle"]
+kw_list_1 = ["fläkt", "jacka", "solglasögon", "solkräm", "badkläder"]
+kw_list_2 = ["snaps", "glass", "grill", "jordgubbar", "sill"]
+kw_list_3 = ["varm choklad", "glögg", "earl grey", "chai", "mojito"]
+kw_list_4 = ["jacka", "paraply", "storm", "mössa", "päls"]
 
-kw_lists = [kw_list_1, kw_list_2, kw_list_3]
+kw_lists = [kw_list_1, kw_list_2, kw_list_3, kw_list_4]
 
 # Define the project and dataset details for BigQuery
 project_id = 'team-god'
 dataset_id = 'google_trends'
-table_id_prefix = 'searchwords'
+table_id_prefix = 'searchwords_new'
 
 app = FastAPI()
 
