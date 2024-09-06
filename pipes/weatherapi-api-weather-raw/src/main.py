@@ -33,7 +33,8 @@ def write(json_data: dict) -> None:
     """
     Unpacks json and sends the data to BigQuery table.
     """
-    with bigquery.Client() as client:
+    client = bigquery.Client()
+    try:
         table_id = "team-god.weather_data.raw_weatherapp"
         table = client.get_table(table_id)
 
@@ -51,6 +52,8 @@ def write(json_data: dict) -> None:
         if errors:
             raise Exception(f"Failed to insert rows: {errors}")
         print(f'Inserted {len(rows_to_insert)} rows')
+    finally:
+        client.close()
 
 
 def read(location: str, date: str) -> dict:
