@@ -60,10 +60,3 @@ def update_trends():
     except Exception as e:
         print(f"An error occurred: {e}")
         raise HTTPException(status_code=500, detail=f"An error occurred: {e}")
-
-
-# docker build -t gcr.io/team-god/pytrends-api-search-clean .
-# docker push gcr.io/team-god/pytrends-api-search-clean
-# gcloud auth configure-docker
-# gcloud run deploy pytrends-api-search-clean-service --image gcr.io/team-god/pytrends-api-search-clean --platform managed --region europe-north1 --concurrency 2 --max-instances 2
-# gcloud run services delete SERVICE_NAME --region europe-north1
