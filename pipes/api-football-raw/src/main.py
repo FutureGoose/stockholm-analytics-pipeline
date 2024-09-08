@@ -109,7 +109,7 @@ def main():
     api_key = os.getenv('API_KEY')
     team_id = 363  # The team ID
     venue_id = 1506  # Tele2 Arena
-    limit = 25  # Fetch the last 50 games
+    limit = 95  # Fetch the last 95 games
 
     if not api_key:
         raise HTTPException(status_code=500, detail="API_KEY not set")
