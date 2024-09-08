@@ -109,7 +109,7 @@ def main():
     api_key = os.getenv('API_KEY')
     team_id = 363  # The team ID
     venue_id = 1506  # Tele2 Arena
-    limit = 95  # Fetch the last 95 games
+    limit = 40  # Fetch the last 40 games
 
     if not api_key:
         raise HTTPException(status_code=500, detail="API_KEY not set")
@@ -117,7 +117,7 @@ def main():
     try:
         # Fetch and store fixture details, and get list of fixture IDs for the last 50 games at the venue
         # fixture_ids = fetch_and_store_fixtures(api_key=api_key, team_id=team_id, venue_id=venue_id, limit=limit)
-        fixture_ids = fetch_and_store_fixtures(api_key=api_key, team_id=team_id, venue=venue_id, limit=limit)
+        fixture_ids = fetch_and_store_fixtures(api_key=api_key, team_id=team_id, venue_id=venue_id, limit=limit)
 
 
         # Fetch and store fixture statistics for the filtered games
