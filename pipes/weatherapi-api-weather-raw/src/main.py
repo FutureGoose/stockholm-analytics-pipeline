@@ -34,23 +34,26 @@ def write(json_data: dict) -> None:
     Unpacks json and sends the data to BigQuery table.
     """
     client = bigquery.Client()
-    table_id = "team-god.weather_data.raw_weatherapp"
-    table = client.get_table(table_id)
+    try:
+        table_id = "team-god.weather_data.raw_weatherapp"
+        table = client.get_table(table_id)
 
-    rows_to_insert = [
-        {
-            "ingestion_timestamp": pendulum.now().to_datetime_string(),
-            "modified_timestamp": pendulum.from_format(json_data['location']['localtime'], 'YYYY-MM-DD HH:mm').to_datetime_string(),
-            "id": hour['time_epoch'],
-            "data": json.dumps(hour)
-        }
-        for hour in json_data['hour']
-    ]
+        rows_to_insert = [
+            {
+                "ingestion_timestamp": pendulum.now().to_datetime_string(),
+                "modified_timestamp": pendulum.from_format(json_data['location']['localtime'], 'YYYY-MM-DD HH:mm').to_datetime_string(),
+                "id": hour['time_epoch'],
+                "data": json.dumps(hour)
+            }
+            for hour in json_data['hour']
+        ]
 
-    errors = client.insert_rows(table, rows_to_insert)
-    if errors:
-        raise Exception(f"Failed to insert rows: {errors}")
-    print(f'Inserted {len(rows_to_insert)} rows')
+        errors = client.insert_rows(table, rows_to_insert)
+        if errors:
+            raise Exception(f"Failed to insert rows: {errors}")
+        print(f'Inserted {len(rows_to_insert)} rows')
+    finally:
+        client.close()
 
 
 def read(location: str, date: str) -> dict:

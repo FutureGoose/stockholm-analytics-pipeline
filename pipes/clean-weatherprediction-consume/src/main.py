@@ -22,16 +22,15 @@ expected_columns = [
 def read() -> list:
     """Fetch weather-data from BigQuery"""
     try:
-        client = bigquery.Client()
-        
-        query = """
-        SELECT hour, month, temp, humidity, pressure, temp_lag_1, temp_lag_3, temp_time
-        FROM `team-god.weather_data.clean_weatherapp` 
-        LIMIT 24
-        """
-        
-        df = client.query(query).to_dataframe()
-        return df.to_dict(orient="records")
+        with bigquery.Client() as client:
+            query = """
+            SELECT hour, month, temp, humidity, pressure, temp_lag_1, temp_lag_3, temp_time
+            FROM `team-god.weather_data.clean_weatherapp` 
+            LIMIT 24
+            """
+            df = client.query(query).to_dataframe()
+
+            return df.to_dict(orient="records")
     
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"BigQuery error: {str(e)}")
@@ -71,23 +70,23 @@ def write(json_data: dict) -> None:
     """
     Unpacks json and sends the data to BigQuery table.
     """
-    client = bigquery.Client()
-    table_id = "team-god.weather_data.raw_predictions_weatherapp"
-    table = client.get_table(table_id)
+    with bigquery.Client() as client:
+        table_id = "team-god.weather_data.raw_predictions_weatherapp"
+        table = client.get_table(table_id)
 
-    rows_to_insert = [
-        {
-            "datetime": datetime.strptime(hour['datetime'], "%Y-%m-%d %H:%M").isoformat(),
-            "prediction": hour['prediction'],
-            "timestamp": pendulum.now().to_datetime_string()
-        }
-        for hour in json_data
-    ]
+        rows_to_insert = [
+            {
+                "datetime": datetime.strptime(hour['datetime'], "%Y-%m-%d %H:%M").isoformat(),
+                "prediction": hour['prediction'],
+                "timestamp": pendulum.now().to_datetime_string()
+            }
+            for hour in json_data
+        ]
 
-    errors = client.insert_rows(table, rows_to_insert)
-    if errors:
-        raise Exception(f"Failed to insert rows: {errors}")
-    print(f'Inserted {len(rows_to_insert)} rows')
+        errors = client.insert_rows(table, rows_to_insert)
+        if errors:
+            raise Exception(f"Failed to insert rows: {errors}")
+        print(f'Inserted {len(rows_to_insert)} rows')
 
 
 @app.get("/")
