@@ -6,7 +6,7 @@ from typing import List
 import pendulum
 
 # Initialize pytrends request
-pytrends = TrendReq(hl='sv', tz=120)  # tz = Central European Summer Time
+pytrends = TrendReq(hl='sv', tz=120, retries=50)  # tz = Central European Summer Time
 
 # Define keywords
 kw_list_1 = ["fläkt", "jacka", "solglasögon", "solkräm", "badkläder"]
