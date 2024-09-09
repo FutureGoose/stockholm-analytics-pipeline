@@ -34,28 +34,17 @@ def fetch_trends_data(kw_list: List[str]) -> pd.DataFrame:
     """
     Fetch Google Trends data for the given list of keywords.
     """
-    max_retries = 5
-    backoff_factor = 2
-    for attempt in range(max_retries):
-        try:
-            # Payload with settings "all categories", "past 3 months", "Stockholm" and "web searches"
-            pytrends.build_payload(kw_list, cat=0, timeframe='today 3-m', geo='SE-AB', gprop='')
-            data = pytrends.interest_over_time()
-            
-            # Add ingestion timestamp as a datetime object
-            data['ingestion_timestamp'] = pd.to_datetime(pendulum.now().to_datetime_string())
+    # Payload with settings "all categories", "past week", "Stockholm" and "web searches"
+    pytrends.build_payload(kw_list, cat=0, timeframe='now 7-d', geo='SE-AB', gprop='')
+    data = pytrends.interest_over_time()
+    
+    # Add ingestion timestamp as a datetime object
+    data['ingestion_timestamp'] = pd.to_datetime(pendulum.now().to_datetime_string())
 
-            data.columns = [col.replace('å', 'a').replace('ä', 'a').replace('ö', 'o').replace(' ', '_') for col in data.columns]
-            
-            return data
-        except HTTPError as e:
-            if e.response.status_code == 429:
-                wait_time = backoff_factor ** attempt
-                print(f"Rate limit exceeded. Retrying in {wait_time} seconds...")
-                time.sleep(wait_time)
-            else:
-                raise
-    raise HTTPException(status_code=429, detail="Rate limit exceeded after multiple retries")
+    # Normalize column names (handle Swedish characters)
+    data.columns = [col.replace('å', 'a').replace('ä', 'a').replace('ö', 'o').replace(' ', '_') for col in data.columns]
+    
+    return data
 
 
 def send_to_bigquery(data: pd.DataFrame, table_suffix: str) -> None:
@@ -78,6 +67,10 @@ def update_trends():
         for idx, kw_list in enumerate(kw_lists):
             trends_data = fetch_trends_data(kw_list)
             send_to_bigquery(trends_data, f"{idx+1}")
+            
+            # Add 60 seconds of sleep between each request to avoid rate limits
+            time.sleep(60)
+            
         return {"status": "Data processing completed"}, 200
     except Exception as e:
         print(f"An error occurred: {e}")
