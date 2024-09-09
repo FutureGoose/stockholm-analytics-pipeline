@@ -22,6 +22,7 @@ table_id_prefix = 'searchwords'
 
 app = FastAPI()
 
+
 def fetch_trends_data(kw_list: List[str]) -> pd.DataFrame:
     """
     Fetch Google Trends data for the given list of keywords.
@@ -37,6 +38,7 @@ def fetch_trends_data(kw_list: List[str]) -> pd.DataFrame:
     
     return data
 
+
 def send_to_bigquery(data: pd.DataFrame, table_suffix: str) -> None:
     """
     Send the fetched trends data to a BigQuery table.
@@ -47,8 +49,9 @@ def send_to_bigquery(data: pd.DataFrame, table_suffix: str) -> None:
     job.result()
     print(f"Data successfully loaded to {table_id}")
 
-@app.get("/update_trends")
-def update_trends():
+
+@app.get("/")
+def main():
     """
     HTTP endpoint to fetch trends data and send it to BigQuery.
     """
