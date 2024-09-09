@@ -4,9 +4,12 @@ from google.cloud import bigquery
 from fastapi import FastAPI, HTTPException
 from typing import List
 import pendulum
+from pytz import timezone
+
+swedish_tz = timezone('Europe/Stockholm')
 
 # Initialize pytrends request
-pytrends = TrendReq(hl='sv', tz=120, retries=50)  # tz = Central European Summer Time
+pytrends = TrendReq(hl='sv', tz=int(pendulum.now(swedish_tz).offset / 60), retries=50)
 
 # Define keywords
 kw_list_1 = ["fläkt", "jacka", "solglasögon", "solkräm", "badkläder"]
