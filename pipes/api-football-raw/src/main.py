@@ -12,6 +12,7 @@ app = FastAPI()
 # load environment variables
 load_dotenv()
 
+
 def fetch_data(endpoint: str, api_key: str, params: dict) -> dict:
     """
     Fetches data from the API using the base URL from environment variables.
@@ -27,6 +28,7 @@ def fetch_data(endpoint: str, api_key: str, params: dict) -> dict:
         return response.json()
     else:
         response.raise_for_status()
+
 
 def write_to_bigquery(table_id: str, json_data: dict, fixture_id: int) -> None:
     """
@@ -48,8 +50,6 @@ def write_to_bigquery(table_id: str, json_data: dict, fixture_id: int) -> None:
         print(f"BigQuery insert errors: {errors}")  # Log any insertion errors
         raise Exception(f"Failed to insert rows: {errors}")
     print(f'Inserted {len(rows_to_insert)} rows into {table_id}')
-
-
 
 
 def fetch_and_store_statistics(api_key: str, fixture_ids: list) -> None:
@@ -76,7 +76,7 @@ def fetch_and_store_statistics(api_key: str, fixture_ids: list) -> None:
         
 
 # --- Fetch Fixture Details and Write to BigQuery ---
-def fetch_and_store_fixtures(api_key: str, team_id: int, venue_id: int, limit: int) -> list:
+def fetch_and_store_fixtures(api_key: str, venue_id: int, limit: int) -> list:
     """
     Fetches fixture details for the last 50 games and stores them in BigQuery.
     Only fetches fixtures where the venue ID matches the specified venue.
@@ -102,12 +102,11 @@ def fetch_and_store_fixtures(api_key: str, team_id: int, venue_id: int, limit: i
 
     return fixture_ids
 
+
 # --- Main Function ---
 @app.get("/")
 def main():
-    # Get API Key and other details from environment
     api_key = os.getenv('API_KEY')
-    team_id = 363  # The team ID
     venue_id = 1506  # Tele2 Arena
     limit = 40  # Fetch the last 40 games
 
@@ -117,7 +116,7 @@ def main():
     try:
         # Fetch and store fixture details, and get list of fixture IDs for the last 50 games at the venue
         # fixture_ids = fetch_and_store_fixtures(api_key=api_key, team_id=team_id, venue_id=venue_id, limit=limit)
-        fixture_ids = fetch_and_store_fixtures(api_key=api_key, team_id=team_id, venue_id=venue_id, limit=limit)
+        fixture_ids = fetch_and_store_fixtures(api_key=api_key, venue_id=venue_id, limit=limit)
 
 
         # Fetch and store fixture statistics for the filtered games
@@ -126,10 +125,3 @@ def main():
         raise HTTPException(status_code=500, detail=f"Error processing data: {e}")
     
     return {"status_code": 200, "message": "Data fetched and stored successfully"}
-
-
-# docker build -t gcr.io/team-god/api-football-raw .
-# docker push gcr.io/team-god/api-football-raw
-# gcloud auth configure-docker
-# gcloud run deploy api-football-raw-service --image gcr.io/team-god/api-football-raw --platform managed --region europe-north1 --concurrency 2 --max-instances 2
-# gcloud run services delete SERVICE_NAME --region europe-north1
