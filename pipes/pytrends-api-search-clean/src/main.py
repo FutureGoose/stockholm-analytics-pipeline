@@ -5,11 +5,14 @@ from fastapi import FastAPI, HTTPException
 from typing import List
 import pendulum
 from pytz import timezone
+import time
+from requests.exceptions import HTTPError
+
 
 swedish_tz = timezone('Europe/Stockholm')
 
 # Initialize pytrends request
-pytrends = TrendReq(hl='sv', tz=int(pendulum.now(swedish_tz).offset / 60), retries=50)
+pytrends = TrendReq(hl='sv', tz=int(pendulum.now(swedish_tz).offset / 60))
 
 # Define keywords
 kw_list_1 = ["fläkt", "jacka", "solglasögon", "solkräm", "badkläder"]
@@ -30,16 +33,28 @@ def fetch_trends_data(kw_list: List[str]) -> pd.DataFrame:
     """
     Fetch Google Trends data for the given list of keywords.
     """
-    # Payload with settings "all categories", "past 3 months", "Stockholm" and "web searches"
-    pytrends.build_payload(kw_list, cat=0, timeframe='today 3-m', geo='SE-AB', gprop='')
-    data = pytrends.interest_over_time()
-    
-    # Add ingestion timestamp as a datetime object
-    data['ingestion_timestamp'] = pd.to_datetime(pendulum.now().to_datetime_string())
+    max_retries = 5
+    backoff_factor = 2
+    for attempt in range(max_retries):
+        try:
+            # Payload with settings "all categories", "past 3 months", "Stockholm" and "web searches"
+            pytrends.build_payload(kw_list, cat=0, timeframe='today 3-m', geo='SE-AB', gprop='')
+            data = pytrends.interest_over_time()
+            
+            # Add ingestion timestamp as a datetime object
+            data['ingestion_timestamp'] = pd.to_datetime(pendulum.now().to_datetime_string())
 
-    data.columns = [col.replace('å', 'a').replace('ä', 'a').replace('ö', 'o').replace(' ', '_') for col in data.columns]
-    
-    return data
+            data.columns = [col.replace('å', 'a').replace('ä', 'a').replace('ö', 'o').replace(' ', '_') for col in data.columns]
+            
+            return data
+        except HTTPError as e:
+            if e.response.status_code == 429:
+                wait_time = backoff_factor ** attempt
+                print(f"Rate limit exceeded. Retrying in {wait_time} seconds...")
+                time.sleep(wait_time)
+            else:
+                raise
+    raise HTTPException(status_code=429, detail="Rate limit exceeded after multiple retries")
 
 
 def send_to_bigquery(data: pd.DataFrame, table_suffix: str) -> None:
