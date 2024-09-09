@@ -29,6 +29,7 @@ table_id_prefix = 'searchwords_new'
 
 app = FastAPI()
 
+
 def fetch_trends_data(kw_list: List[str]) -> pd.DataFrame:
     """
     Fetch Google Trends data for the given list of keywords.
