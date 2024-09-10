@@ -1,0 +1,18 @@
+main:
+  params: []
+  steps:
+    - retrieveAndStoreWeatherData:
+        call: http.get
+        args:
+          url: https://api-football-raw-service-76117246159.europe-north1.run.app
+        result: PipelineResponse
+    - validatePipelineResponse:
+        switch:
+          - condition: ${PipelineResponse.body.status_code == 200}
+            steps:
+              - workflow_end:
+                  return: 'Workflow executed successfully'
+          - condition: ${PipelineResponse.body.status_code != 200}
+            steps:
+              - handleError:
+                  raise: '${"Error in workflow execution: " + PipelineResponse.content.message}'
