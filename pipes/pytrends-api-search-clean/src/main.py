@@ -35,7 +35,7 @@ def fetch_trends_data(kw_list: List[str]) -> pd.DataFrame:
     Fetch Google Trends data for the given list of keywords.
     """
     # Payload with settings "all categories", "past week", "Stockholm" and "web searches"
-    pytrends.build_payload(kw_list, cat=0, timeframe='now 7-d', geo='SE-AB', gprop='')
+    pytrends.build_payload(kw_list, cat=0, timeframe='now 3-m', geo='SE-AB', gprop='')
     data = pytrends.interest_over_time()
     
     # Add ingestion timestamp as a datetime object
