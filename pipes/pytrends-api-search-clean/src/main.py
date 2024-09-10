@@ -13,21 +13,19 @@ swedish_tz = timezone('Europe/Stockholm')
 timeout = (30, 100)
 pytrends = TrendReq(hl='sv', tz=int(pendulum.now(swedish_tz).offset / 60), timeout=timeout)
 
-# Define keywords
+# google trends keywords
 kw_list_1 = ["fläkt", "jacka", "solglasögon", "solkräm", "badkläder"]
 kw_list_2 = ["snaps", "glass", "grill", "jordgubbar", "sill"]
 kw_list_3 = ["varm choklad", "glögg", "earl grey", "chai", "mojito"]
 kw_list_4 = ["jacka", "paraply", "storm", "mössa", "päls"]
-
 kw_lists = [kw_list_1, kw_list_2, kw_list_3, kw_list_4]
 
-# Define the project and dataset details for BigQuery
+# bigquery global variables
 project_id = 'team-god'
 dataset_id = 'google_trends'
 table_id_prefix = 'searchwords_new'
 
 app = FastAPI()
-
 
 def fetch_trends_data(kw_list: List[str]) -> pd.DataFrame:
     """
@@ -38,13 +36,11 @@ def fetch_trends_data(kw_list: List[str]) -> pd.DataFrame:
 
     for attempt in range(max_retries):
         try:
-            # Payload with settings "all categories", "past 3 months", "Stockholm" and "web searches"
+            # payload with settings "all categories", "past 3 months", "Stockholm" and "web searches"
             pytrends.build_payload(kw_list, cat=0, timeframe='today 3-m', geo='SE-AB', gprop='')
             data = pytrends.interest_over_time()
             
-            # Add ingestion timestamp as a datetime object
             data['ingestion_timestamp'] = pd.to_datetime(pendulum.now().to_datetime_string())
-
             data.columns = [col.replace('å', 'a').replace('ä', 'a').replace('ö', 'o').replace(' ', '_') for col in data.columns]
             
             return data
