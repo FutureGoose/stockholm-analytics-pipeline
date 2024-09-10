@@ -49,11 +49,15 @@ def fetch_trends_data(kw_list: List[str]) -> pd.DataFrame:
             return data
         except HTTPError as e:
             if e.response.status_code == 429:
-                wait_time = backoff_factor * attempt
-                print(f"Rate limit exceeded. Retrying in {wait_time} seconds...")
+                wait_time = backoff_factor * (attempt + 1)  # Increment wait time
+                print(f"Rate limit exceeded. Retrying in {wait_time} seconds... (Attempt {attempt + 1})")
                 time.sleep(wait_time)
             else:
-                raise
+                print(f"HTTP error occurred: {e}")
+                raise HTTPException(status_code=500, detail=f"HTTP error occurred: {e}")
+        except Exception as e:
+            print(f"An unexpected error occurred: {e}")
+            raise HTTPException(status_code=500, detail=f"An unexpected error occurred: {e}")
     raise HTTPException(status_code=429, detail="Rate limit exceeded after multiple retries")
  
 
@@ -84,4 +88,3 @@ def main():
         time.sleep(60)
             
     return {"status_code": 200}
-    
