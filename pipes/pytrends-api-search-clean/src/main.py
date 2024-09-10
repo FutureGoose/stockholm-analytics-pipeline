@@ -74,16 +74,14 @@ def main():
     """
     HTTP endpoint to fetch trends data and send it to BigQuery.
     """
-    try:
-        for idx, kw_list in enumerate(kw_lists):
-            trends_data = fetch_trends_data(kw_list)
+    for idx, kw_list in enumerate(kw_lists):
+        trends_data = fetch_trends_data(kw_list)
+        try:
             send_to_bigquery(trends_data, f"{idx+1}")
-            
-            # Add 60 seconds of sleep between each request to avoid rate limits
-            time.sleep(60)
-
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"An error occurred: {e}")
+        except Exception as e:
+            print(f"Error sending data to BigQuery: {e}")
+        
+        time.sleep(60)
             
     return {"status_code": 200}
     
