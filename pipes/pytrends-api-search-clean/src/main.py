@@ -47,20 +47,12 @@ def fetch_trends_data(kw_list: List[str]) -> pd.DataFrame:
             data.columns = [col.replace('å', 'a').replace('ä', 'a').replace('ö', 'o').replace(' ', '_') for col in data.columns]
             
             return data
-        except HTTPError as e:
-            if e.response.status_code == 429:
-                wait_time = backoff_factor * (attempt + 1)  # Increment wait time
-                print(f"Rate limit exceeded. Retrying in {wait_time} seconds... (Attempt {attempt + 1})")
-                time.sleep(wait_time)
-            else:
-                print(f"HTTP error occurred: {e}")
-                raise HTTPException(status_code=500, detail=f"HTTP error occurred: {e}")
         except Exception as e:
-            print(f"An unexpected error occurred: {e}")
-            raise HTTPException(status_code=500, detail=f"An unexpected error occurred: {e}")
-    raise HTTPException(status_code=429, detail="Rate limit exceeded after multiple retries")
+            wait_time = backoff_factor * (attempt + 1)
+            print(f"Error occurred: {e}. Retrying in {wait_time} seconds... (Attempt {attempt + 1})")
+            time.sleep(wait_time)
+    raise HTTPException(status_code=500, detail="Failed to fetch data after multiple retries")
  
-
 
 def send_to_bigquery(data: pd.DataFrame, table_suffix: str) -> None:
     """
