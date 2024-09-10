@@ -6,6 +6,7 @@ from typing import List
 import pendulum
 from pytz import timezone
 import time
+from requests.exceptions import HTTPError
 
 swedish_tz = timezone('Europe/Stockholm')
 
@@ -27,9 +28,6 @@ table_id_prefix = 'searchwords_new'
 
 app = FastAPI()
 
-
-import time
-from requests.exceptions import HTTPError
 
 def fetch_trends_data(kw_list: List[str]) -> pd.DataFrame:
     """
