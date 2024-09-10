@@ -33,14 +33,13 @@ def fetch_trends_data(kw_list: List[str]) -> pd.DataFrame:
     """
     Fetch Google Trends data for the given list of keywords.
     """
-    max_retries = 19
+    max_retries = 10
     backoff_factor = 60
-    timeout = 10
 
     for attempt in range(max_retries):
         try:
             # Payload with settings "all categories", "past 3 months", "Stockholm" and "web searches"
-            pytrends.build_payload(kw_list, cat=0, timeframe='today 3-m', geo='SE-AB', gprop='', timeout=timeout)
+            pytrends.build_payload(kw_list, cat=0, timeframe='today 3-m', geo='SE-AB', gprop='')
             data = pytrends.interest_over_time()
             
             # Add ingestion timestamp as a datetime object
@@ -50,7 +49,7 @@ def fetch_trends_data(kw_list: List[str]) -> pd.DataFrame:
             
             return data
         except Exception as e:
-            wait_time = backoff_factor * (attempt + 1)
+            wait_time = backoff_factor * ((attempt + 1) * 0.25)
             print(f"Error occurred: {e}. Retrying in {wait_time} seconds... (Attempt {attempt + 1})")
             time.sleep(wait_time)
     raise HTTPException(status_code=500, detail="Failed to fetch data after multiple retries")
