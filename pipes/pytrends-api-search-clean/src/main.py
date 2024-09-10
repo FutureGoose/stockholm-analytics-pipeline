@@ -59,7 +59,7 @@ def send_to_bigquery(data: pd.DataFrame, table_suffix: str) -> None:
 
 
 @app.get("/")
-def update_trends():
+def main():
     """
     HTTP endpoint to fetch trends data and send it to BigQuery.
     """
@@ -70,8 +70,9 @@ def update_trends():
             
             # Add 60 seconds of sleep between each request to avoid rate limits
             time.sleep(60)
-            
-        return {"status": "Data processing completed"}, 200
+
     except Exception as e:
-        print(f"An error occurred: {e}")
         raise HTTPException(status_code=500, detail=f"An error occurred: {e}")
+            
+    return {"status_code": 200}
+    
