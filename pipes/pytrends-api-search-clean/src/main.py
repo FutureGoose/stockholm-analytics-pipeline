@@ -6,8 +6,6 @@ from typing import List
 import pendulum
 from pytz import timezone
 import time
-from requests.exceptions import HTTPError
-
 
 swedish_tz = timezone('Europe/Stockholm')
 
