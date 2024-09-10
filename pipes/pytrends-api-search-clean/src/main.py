@@ -39,11 +39,11 @@ def fetch_trends_data(kw_list: List[str]) -> pd.DataFrame:
             # payload with settings "all categories", "past 3 months", "Stockholm" and "web searches"
             pytrends.build_payload(kw_list, cat=0, timeframe='today 3-m', geo='SE-AB', gprop='')
             data = pytrends.interest_over_time()
-            
             data['ingestion_timestamp'] = pd.to_datetime(pendulum.now().to_datetime_string())
             data.columns = [col.replace('å', 'a').replace('ä', 'a').replace('ö', 'o').replace(' ', '_') for col in data.columns]
             
             return data
+        
         except Exception as e:
             wait_time = backoff_factor * ((attempt + 1) * 0.25)
             print(f"Error occurred: {e}. Retrying in {wait_time} seconds... (Attempt {attempt + 1})")
@@ -75,7 +75,5 @@ def main():
             error_message =f"Error sending data to BigQuery: {e}"
             print(error_message)
             raise HTTPException(status_code=500, detail=error_message)
-        
-        #time.sleep(60)
             
     return {"status_code": 200}
