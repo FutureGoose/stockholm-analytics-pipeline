@@ -105,10 +105,8 @@ def fetch_and_store_fixtures(api_key: str, venue_id: int, limit: int) -> list:
 
 # --- Main Function ---
 @app.get("/")
-def main():
+def main(venue_id: int, limit: int):
     api_key = os.getenv('API_KEY')
-    venue_id = 1506  # Tele2 Arena
-    limit = 40  # Fetch the last 40 games
 
     if not api_key:
         raise HTTPException(status_code=500, detail="API_KEY not set")
