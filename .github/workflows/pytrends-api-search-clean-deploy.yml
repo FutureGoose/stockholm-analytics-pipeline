@@ -3,7 +3,7 @@ name: Deploy pytrends-api-search-clean
 on:
   push:
     branches:
-      - main
+      - pytrends
     paths:
       - 'pipes/pytrends-api-search-clean/**'
 
