@@ -5,7 +5,7 @@ on:
     branches:
       - api-football
     paths:
-      - 'pipelines/api_sports-api-football-raw.yml'
+      - 'pipelines/api_sports-api-football-raw-workflow.yml'
 
 jobs:
   deploy-workflow:
