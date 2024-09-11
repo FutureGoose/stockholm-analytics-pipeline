@@ -1,0 +1,35 @@
+name: Deploy Python Yesterday HTTP
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'pipes/python-yesterday-http/**'
+   
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - id: 'auth'
+      uses: 'google-github-actions/auth@v2'
+      with:
+        credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+    - name: Deploy to Cloud Functions
+      run: |
+        gcloud functions deploy python-yesterday-http \
+          --runtime python39 \
+          --trigger-http \
+          --allow-unauthenticated \
+          --entry-point get_yesterday_date \
+          --region europe-west1 \
+          --memory 128MB \
+          --concurrency 2 \
+          --max-instances 2 \
+          --source ./pipes/python-yesterday-http/src \
+          --service-account ${{ secrets.GCP_SERVICE_ACCOUNT_EMAIL }}

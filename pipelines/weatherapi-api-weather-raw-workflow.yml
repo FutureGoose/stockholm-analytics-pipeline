@@ -1,0 +1,24 @@
+main:
+  params: []
+  steps:
+    - getYesterdayDate:
+        assign:
+            - yesterday: ${text.substring(time.format(sys.now() - 86400, "Europe/Stockholm"), 0, 10)}
+    - retrieveAndStoreWeatherData:
+        call: http.get
+        args:
+          url: https://weatherapi-api-weather-raw-service-5d5xhd46ea-lz.a.run.app
+          query:
+            location: "Stockholm"
+            date: ${yesterday}
+        result: PipelineResponse
+    - validatePipelineResponse:
+        switch:
+          - condition: ${PipelineResponse.body.status_code == 200}
+            steps:
+              - workflow_end:
+                  return: 'Workflow executed successfully'
+          - condition: ${PipelineResponse.body.status_code != 200}
+            steps:
+              - handleError:
+                  raise: '${"Error in workflow execution: " + PipelineResponse.content.message}'

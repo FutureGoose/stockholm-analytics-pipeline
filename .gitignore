@@ -1,7 +1,9 @@
 Zone.Identifier
 secrets/
 venv
+env
 data/
 *.csv
 *.pkl
 *.ipynb_checkpoints
+__pycache__
