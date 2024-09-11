@@ -1,7 +1,7 @@
 main:
   params: []
   steps:
-    - retrieveAndStoreWeatherData:
+    - retrieveAndStoreFootballData:
         call: http.get
         args:
           url: https://api_sports-api-football-raw-service-76117246159.europe-north1.run.app
