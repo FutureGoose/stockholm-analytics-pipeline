@@ -1,4 +1,4 @@
-name: Deploy api_sports-api-football-raw-workflow.yml
+name: Deploy api_sports-api-football-raw-workflow
 
 on:
   push:
