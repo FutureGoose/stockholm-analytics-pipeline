@@ -3,7 +3,7 @@ name: Deploy api_sports-api-football-raw
 on:
   push:
     branches:
-      - main
+      - api-football
     paths:
       - 'pipes/api_sports-api-football-raw/**'
 
