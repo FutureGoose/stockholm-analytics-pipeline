@@ -29,5 +29,5 @@ jobs:
     - name: Deploy Google Workflow
       run: |
         gcloud workflows deploy football-ingestion-workflow \
-          --source pipelines/apisports-api-football-raw-workflow.yml \
+          --source pipelines/api_sports-api-football-raw-workflow.yml \
           --location europe-north1
