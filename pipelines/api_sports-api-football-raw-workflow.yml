@@ -5,9 +5,9 @@ main:
         call: http.get
         args:
           url: https://apisports-api-football-raw-service-5d5xhd46ea-lz.a.run.app
-          query:
-            venue_id: 1506 # Id of Tele2 Arena
-            limit: 40
+          # query:
+          #   venue_id: 1506 # Id of Tele2 Arena
+          #   limit: 40
         result: PipelineResponse
     - validatePipelineResponse:
         switch:

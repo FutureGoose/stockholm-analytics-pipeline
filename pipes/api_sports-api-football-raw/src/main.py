@@ -105,8 +105,12 @@ def fetch_and_store_fixtures(api_key: str, venue_id: int, limit: int) -> list:
 
 # --- Main Function ---
 @app.get("/")
-def main(venue_id: int, limit: int):
+# def main(venue_id: int, limit: int):
+def main():
     api_key = os.getenv('API_KEY')
+
+    venue_id = 1506
+    limit = 30
 
     if not api_key:
         raise HTTPException(status_code=500, detail="API_KEY not set")
