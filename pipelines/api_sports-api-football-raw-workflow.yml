@@ -8,6 +8,8 @@ main:
           # query:
           #   venue_id: 1506 # Id of Tele2 Arena
           #   limit: 40
+          #
+          #
         result: PipelineResponse
     - validatePipelineResponse:
         switch:
