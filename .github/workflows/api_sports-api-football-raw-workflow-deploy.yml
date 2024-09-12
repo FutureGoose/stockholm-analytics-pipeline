@@ -3,7 +3,7 @@ name: Deploy api_sports-api-football-raw-workflow
 on:
   push:
     branches:
-      - api-football
+      - main
     paths:
       - 'pipelines/api_sports-api-football-raw-workflow.yml'
 
