@@ -110,7 +110,7 @@ def main():
     api_key = os.getenv('API_KEY')
 
     venue_id = 1506
-    limit = 30
+    limit = 3
 
     if not api_key:
         raise HTTPException(status_code=500, detail="API_KEY not set")
