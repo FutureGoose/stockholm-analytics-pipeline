@@ -3,7 +3,7 @@ name: Deploy weatherapi-api-weather-raw-workflow.yml
 on:
   push:
     branches:
-      - main
+      - demo-branch
     paths:
       - 'pipelines/weatherapi-api-weather-raw-workflow.yml'
 
