@@ -3,7 +3,7 @@ name: Deploy weatherapi-api-weather-raw
 on:
   push:
     branches:
-      - demo-branch
+      - main
     paths:
       - 'pipes/weatherapi-api-weather-raw/**'
 

@@ -16,4 +16,3 @@ main:
             steps:
               - handleError:
                   raise: '${"Error in workflow execution: " + PipelineResponse.content.message}'
-                  #
