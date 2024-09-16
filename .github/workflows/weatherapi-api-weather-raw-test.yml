@@ -3,7 +3,7 @@ name: Run weatherapi-api-weather-raw tests
 on:
   push:
     branches:
-      - main
+      - demo-branch
     paths:
       - 'pipes/weatherapi-api-weather-raw/src/**'
   pull_request:

@@ -9,6 +9,7 @@ import pendulum
 app = FastAPI()
 load_dotenv()
 
+#
 
 def fetch_weather_data(api_url: str, api_key: str, location: str, date: str) -> dict:
     """
