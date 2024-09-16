@@ -45,3 +45,7 @@ jobs:
           --max-instances 2 \
           --allow-unauthenticated \
           --set-env-vars API_URL=${{ secrets.WEATHER_API_URL }},API_KEY=${{ secrets.WEATHER_API_KEY }}
+
+
+
+

@@ -31,3 +31,6 @@ jobs:
         gcloud workflows deploy weather-ingestion-workflow \
           --source pipelines/weatherapi-api-weather-raw-workflow.yml \
           --location europe-north1
+
+
+
