@@ -3,7 +3,7 @@ name: Deploy weatherapi-api-weather-raw-workflow.yml
 on:
   push:
     branches:
-      - main
+      - demo-branch
     paths:
       - 'pipelines/weatherapi-api-weather-raw-workflow.yml'
 
@@ -31,3 +31,6 @@ jobs:
         gcloud workflows deploy weather-ingestion-workflow \
           --source pipelines/weatherapi-api-weather-raw-workflow.yml \
           --location europe-north1
+
+
+
