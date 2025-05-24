@@ -1,4 +1,4 @@
-# AI23 Data Engineering Project
+# Stockholm Analytics Pipeline
 
 A comprehensive data pipeline system for Swedish market analytics, implementing containerized microservices for collecting, processing, and analyzing data from various external APIs with machine learning capabilities.
 
