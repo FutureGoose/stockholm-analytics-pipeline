@@ -64,52 +64,54 @@ graph TB
         SMHI["SMHI Swedish Weather API"]
     end
     
-    subgraph "Utility Services"
-        DATE["python-yesterday-http<br/>(Date Calculator)"]
-    end
-    
     subgraph "Processing Services"
         PTS["pytrends-api-search-clean"]
         WAR["weatherapi-api-weather-raw"]
         FAR["api_sports-api-football-raw"]
         SAR["smhi-api-weather-raw"]
-        RWC["raw-weather-clean<br/>(SQL Transformation)"]
         CWP["clean-weatherprediction-consume<br/>(XGBoost ML)"]
     end
     
     subgraph "BigQuery Storage"
-        GTBQ["google_trends.searchwords_new_*"]
+        GTBQ1["google_trends.searchwords_new_1"]
+        GTBQ2["google_trends.searchwords_new_2"]
+        GTBQ3["google_trends.searchwords_new_3"]
+        GTBQ4["google_trends.searchwords_new_4"]
         WBQR["weather_data.raw_weatherapp"]
-        WBQC["weather_data.clean_weatherapp"]
+        WBQC["weather_data.clean_weatherapp<br/>(Manual SQL)"]
         WBQP["weather_data.raw_predictions_weatherapp"]
         FBQF["football_data.raw_fixture_details"]
         FBQS["football_data.raw_fixture_statistics"]
         RBQR["radiation_data.raw_radiationapp"]
     end
     
-    %% Direct API to Processing flows
-    GAPI --> PTS --> GTBQ
+    %% Active automated flows
+    GAPI --> PTS --> GTBQ1
+    PTS --> GTBQ2
+    PTS --> GTBQ3
+    PTS --> GTBQ4
     FAPI --> FAR --> FBQF
     FAR --> FBQS
     SMHI --> SAR --> RBQR
-    
-    %% Weather data pipeline with dependencies
-    DATE -.->|provides date| WAR
     WAPI --> WAR --> WBQR
-    WBQR --> RWC --> WBQC
+    
+    %% Manual/Conditional flows
+    WBQR -.->|Manual SQL Transform| WBQC
     WBQC --> CWP --> WBQP
     
     %% Styling
     classDef apiClass fill:#e1f5fe
     classDef serviceClass fill:#f3e5f5
     classDef storageClass fill:#e8f5e8
-    classDef utilClass fill:#fff3e0
+    classDef manualClass fill:#fff3e0,stroke-dasharray: 5 5
     
     class GAPI,WAPI,FAPI,SMHI apiClass
-    class PTS,WAR,FAR,SAR,RWC,CWP serviceClass
-    class GTBQ,WBQR,WBQC,WBQP,FBQF,FBQS,RBQR storageClass
-    class DATE utilClass
+    class PTS,WAR,FAR,SAR,CWP serviceClass
+    class GTBQ1,GTBQ2,GTBQ3,GTBQ4,WBQR,WBQP,FBQF,FBQS,RBQR storageClass
+    class WBQC manualClass
 ```
+
+**Note**: The weather data cleaning step (`raw_weatherapp` → `clean_weatherapp`) requires manual SQL execution and is not currently automated in the pipeline.
 
 ## 🚀 Deployment
 
