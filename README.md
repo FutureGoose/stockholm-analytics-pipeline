@@ -43,11 +43,20 @@ The system consists of five main processing domains deployed on Google Cloud Pla
 - **Historical Data**: 7-day rolling collection for trend analysis
 - **Swedish Official Source**: Direct integration with SMHI's meteorological API
 
+### Looker Studio Dashboard [5](#0-4)
+
+- **Comprehensive Data Integration**: Combines all data sources into unified visualizations
+- **Correlation Analysis**: Reveals relationships between Google Trends searches and weather patterns
+- **Behavioral Insights**: Shows how searches for "umbrella", "jacka" (jacket), and weather gear correlate with actual weather conditions
+- **Multi-Source Analytics**: Integrates weather predictions, trending topics, football data, and radiation measurements
+- **Interactive Visualizations**: Real-time dashboard for stakeholder insights and data exploration
+
 ## 🛠️ Technology Stack
 
 - **Runtime**: Python 3.x with FastAPI
-- **ML Framework**: XGBoost for weather prediction
+- **ML Framework**: XGBoost for weather prediction (WeatherAPI + SMHI data)
 - **Data Storage**: Google BigQuery
+- **Data Visualization**: Looker Studio for correlation analysis and insights
 - **Container Platform**: Google Cloud Run
 - **Orchestration**: Google Workflows
 - **CI/CD**: GitHub Actions
@@ -85,6 +94,10 @@ graph TB
         RBQR["radiation_data.raw_radiationapp"]
     end
     
+    subgraph "Data Visualization"
+        LS["Looker Studio Dashboard<br/>(Correlation Analysis & Insights)"]
+    end
+    
     %% API to Processing to Storage flows
     GAPI --> PTS --> GTBQ1
     PTS --> GTBQ2
@@ -95,17 +108,33 @@ graph TB
     SMHI --> SAR --> RBQR
     WAPI --> WAR --> WBQR
     
-    %% Weather prediction pipeline
-    WBQR --> WBQC --> CWP --> WBQP
+    %% Weather prediction pipeline (WeatherAPI + SMHI data)
+    WBQR --> WBQC
+    RBQR --> CWP
+    WBQC --> CWP --> WBQP
+    
+    %% All data feeds into Looker Studio for visualization
+    GTBQ1 --> LS
+    GTBQ2 --> LS
+    GTBQ3 --> LS
+    GTBQ4 --> LS
+    WBQR --> LS
+    WBQC --> LS
+    WBQP --> LS
+    FBQF --> LS
+    FBQS --> LS
+    RBQR --> LS
     
     %% Styling
     classDef apiClass fill:#e1f5fe
     classDef serviceClass fill:#f3e5f5
     classDef storageClass fill:#e8f5e8
+    classDef visualClass fill:#f1f8e9
     
     class GAPI,WAPI,FAPI,SMHI apiClass
     class PTS,WAR,FAR,SAR,CWP serviceClass
     class GTBQ1,GTBQ2,GTBQ3,GTBQ4,WBQR,WBQC,WBQP,FBQF,FBQS,RBQR storageClass
+    class LS visualClass
 ```
 
 ## 🚀 Deployment
@@ -133,6 +162,7 @@ Each service deploys automatically via GitHub Actions when changes are pushed to
 
 ### Weather ML Model
 - **Training Data**: 183,817 records spanning 20 years
+- **Data Sources**: Combined WeatherAPI and SMHI radiation data for enhanced predictions
 - **Features**: 7 engineered features including lag variables
 - **Target**: Maximum temperature prediction for next 24 hours
 - **Accuracy**: MAE 1.43°C, RMSE 1.89°C
@@ -141,6 +171,7 @@ Each service deploys automatically via GitHub Actions when changes are pushed to
 - **Google Trends**: 4 themed keyword categories with retry mechanisms
 - **Football Data**: Rate-limited collection (60s pause every 10 requests)
 - **Weather Prediction**: Real-time inference with feature validation
+- **Dashboard Analytics**: Cross-dataset correlation analysis revealing behavioral weather patterns
 
 ## 🔧 Development
 
