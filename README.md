@@ -6,12 +6,13 @@ A comprehensive data pipeline system for Swedish market analytics, implementing 
 
 ## 🏗️ Architecture Overview
 
-The system consists of four main processing domains deployed on Google Cloud Platform:
+The system consists of five main processing domains deployed on Google Cloud Platform:
 
 - **Google Trends Pipeline** - Swedish keyword search trends analysis
 - **Weather Prediction ML Pipeline** - XGBoost-powered weather forecasting for Stockholm  
 - **Football Analytics Pipeline** - Match statistics and fixture data collection
 - **Weather Data Ingestion** - Multi-source weather data collection (WeatherAPI, SMHI)
+- **Radiation Data Collection** - Swedish meteorological radiation measurements
 
 ## 🚀 Key Features
 
@@ -35,6 +36,13 @@ The system consists of four main processing domains deployed on Google Cloud Pla
 - **Rate Limiting**: Intelligent throttling to respect API quotas
 - **Flexible Storage**: JSON document storage for comprehensive match data
 
+### SMHI Radiation Data [4](#0-3)
+
+- **Multi-Parameter Collection**: Six radiation parameters (116, 117, 118, 120, 121, 122)
+- **Stockholm-Focused**: Coordinates 59.33258°N, 18.0649°E for accurate local data
+- **Historical Data**: 7-day rolling collection for trend analysis
+- **Swedish Official Source**: Direct integration with SMHI's meteorological API
+
 ## 🛠️ Technology Stack
 
 - **Runtime**: Python 3.x with FastAPI
@@ -53,23 +61,54 @@ graph TB
         GAPI["Google Trends API"]
         WAPI["WeatherAPI"]
         FAPI["API Sports Football"]
+        SMHI["SMHI Swedish Weather API"]
+    end
+    
+    subgraph "Utility Services"
+        DATE["python-yesterday-http<br/>(Date Calculator)"]
     end
     
     subgraph "Processing Services"
         PTS["pytrends-api-search-clean"]
-        CWP["clean-weatherprediction-consume"]
+        WAR["weatherapi-api-weather-raw"]
         FAR["api_sports-api-football-raw"]
+        SAR["smhi-api-weather-raw"]
+        RWC["raw-weather-clean<br/>(SQL Transformation)"]
+        CWP["clean-weatherprediction-consume<br/>(XGBoost ML)"]
     end
     
     subgraph "BigQuery Storage"
         GTBQ["google_trends.searchwords_new_*"]
+        WBQR["weather_data.raw_weatherapp"]
+        WBQC["weather_data.clean_weatherapp"]
         WBQP["weather_data.raw_predictions_weatherapp"]
         FBQF["football_data.raw_fixture_details"]
+        FBQS["football_data.raw_fixture_statistics"]
+        RBQR["radiation_data.raw_radiationapp"]
     end
     
+    %% Direct API to Processing flows
     GAPI --> PTS --> GTBQ
-    WAPI --> CWP --> WBQP
     FAPI --> FAR --> FBQF
+    FAR --> FBQS
+    SMHI --> SAR --> RBQR
+    
+    %% Weather data pipeline with dependencies
+    DATE -.->|provides date| WAR
+    WAPI --> WAR --> WBQR
+    WBQR --> RWC --> WBQC
+    WBQC --> CWP --> WBQP
+    
+    %% Styling
+    classDef apiClass fill:#e1f5fe
+    classDef serviceClass fill:#f3e5f5
+    classDef storageClass fill:#e8f5e8
+    classDef utilClass fill:#fff3e0
+    
+    class GAPI,WAPI,FAPI,SMHI apiClass
+    class PTS,WAR,FAR,SAR,RWC,CWP serviceClass
+    class GTBQ,WBQR,WBQC,WBQP,FBQF,FBQS,RBQR storageClass
+    class DATE utilClass
 ```
 
 ## 🚀 Deployment
@@ -86,6 +125,7 @@ Each service deploys automatically via GitHub Actions when changes are pushed to
 - **Path-based Triggers**: Only affected services redeploy
 - **Regional Deployment**: `europe-north1` for European data residency
 - **Container Registry**: `gcr.io/team-god/` namespace
+- **Complete Coverage**: All 7 microservices have CI/CD pipelines
 
 ### Service Configuration
 - **Concurrency**: 2 requests per instance
@@ -139,6 +179,15 @@ Each pipeline follows a consistent structure:
 
 ### Football Analytics Service
 - `GET /` - Collect fixture details and statistics
+
+### WeatherAPI Raw Data Service
+- `GET /` - Collect historical weather data for specified location and date
+
+### SMHI Radiation Service
+- `GET /` - Collect radiation measurements for Stockholm region
+
+### Date Utility Service
+- `GET /` - Return yesterday's date in YYYY-MM-DD format
 
 ## 🏢 Project Context
 
