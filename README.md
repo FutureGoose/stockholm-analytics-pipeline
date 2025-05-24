@@ -72,20 +72,20 @@ graph TB
         CWP["clean-weatherprediction-consume<br/>(XGBoost ML)"]
     end
     
-    subgraph "BigQuery Storage"
+    subgraph "BigQuery Storage & Transformation"
         GTBQ1["google_trends.searchwords_new_1"]
         GTBQ2["google_trends.searchwords_new_2"]
         GTBQ3["google_trends.searchwords_new_3"]
         GTBQ4["google_trends.searchwords_new_4"]
         WBQR["weather_data.raw_weatherapp"]
-        WBQC["weather_data.clean_weatherapp<br/>(Manual SQL)"]
+        WBQC["weather_data.clean_weatherapp<br/>(Automated SQL Transform)"]
         WBQP["weather_data.raw_predictions_weatherapp"]
         FBQF["football_data.raw_fixture_details"]
         FBQS["football_data.raw_fixture_statistics"]
         RBQR["radiation_data.raw_radiationapp"]
     end
     
-    %% Active automated flows
+    %% API to Processing to Storage flows
     GAPI --> PTS --> GTBQ1
     PTS --> GTBQ2
     PTS --> GTBQ3
@@ -95,23 +95,18 @@ graph TB
     SMHI --> SAR --> RBQR
     WAPI --> WAR --> WBQR
     
-    %% Manual/Conditional flows
-    WBQR -.->|Manual SQL Transform| WBQC
-    WBQC --> CWP --> WBQP
+    %% Weather prediction pipeline
+    WBQR --> WBQC --> CWP --> WBQP
     
     %% Styling
     classDef apiClass fill:#e1f5fe
     classDef serviceClass fill:#f3e5f5
     classDef storageClass fill:#e8f5e8
-    classDef manualClass fill:#fff3e0,stroke-dasharray: 5 5
     
     class GAPI,WAPI,FAPI,SMHI apiClass
     class PTS,WAR,FAR,SAR,CWP serviceClass
-    class GTBQ1,GTBQ2,GTBQ3,GTBQ4,WBQR,WBQP,FBQF,FBQS,RBQR storageClass
-    class WBQC manualClass
+    class GTBQ1,GTBQ2,GTBQ3,GTBQ4,WBQR,WBQC,WBQP,FBQF,FBQS,RBQR storageClass
 ```
-
-**Note**: The weather data cleaning step (`raw_weatherapp` → `clean_weatherapp`) requires manual SQL execution and is not currently automated in the pipeline.
 
 ## 🚀 Deployment
 
